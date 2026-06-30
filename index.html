@@ -26,7 +26,12 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: var(--bg);
+    background:
+      radial-gradient(circle at 15% 10%, rgba(79,142,247,0.25), transparent 40%),
+      radial-gradient(circle at 85% 0%, rgba(167,139,250,0.22), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(34,211,238,0.15), transparent 50%),
+      linear-gradient(160deg, #05060a 0%, #0d0f14 50%, #090a10 100%);
+    background-attachment: fixed;
     color: var(--text);
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
@@ -76,9 +81,11 @@
     display: flex;
     align-items: center;
     gap: 7px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
     padding: 5px 10px;
     font-size: 11px;
   }
@@ -98,8 +105,12 @@
   /* ── Timetable wrapper ── */
   .tt-wrapper {
     overflow-x: auto;
-    border-radius: 12px;
-    border: 1px solid var(--border);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
     margin-bottom: 28px;
   }
 
@@ -110,15 +121,15 @@
   }
 
   thead th {
-    background: var(--surface);
+    background: rgba(255,255,255,0.04);
     padding: 10px 8px;
     font-size: 11px;
     font-family: 'JetBrains Mono', monospace;
     font-weight: 600;
     color: var(--muted);
     text-align: center;
-    border-bottom: 1px solid var(--border);
-    border-right: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-right: 1px solid rgba(255,255,255,0.06);
     white-space: nowrap;
   }
 
@@ -129,10 +140,10 @@
 
   thead th:first-child { text-align: left; padding-left: 16px; }
 
-  tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+  tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.06); }
 
   td {
-    border-right: 1px solid var(--border);
+    border-right: 1px solid rgba(255,255,255,0.05);
     text-align: center;
     vertical-align: middle;
     height: var(--card-h);
@@ -146,12 +157,12 @@
     padding-left: 16px;
     min-width: 96px;
     color: var(--text);
-    background: var(--surface);
+    background: rgba(255,255,255,0.03);
   }
 
   /* ── Subject cells ── */
   .cell {
-    border-radius: 8px;
+    border-radius: 10px;
     height: 68px;
     display: flex;
     flex-direction: column;
@@ -161,11 +172,17 @@
     padding: 6px 4px;
     margin: 2px;
     position: relative;
-    transition: transform 0.15s, opacity 0.15s;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
     cursor: default;
   }
 
-  .cell:hover { transform: scale(1.04); opacity: 0.92; }
+  .cell:hover {
+    transform: scale(1.06) translateY(-2px);
+    opacity: 1;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.12) inset;
+  }
 
   .cell-slot {
     font-family: 'JetBrains Mono', monospace;
@@ -203,14 +220,14 @@
   td.empty-cell { background: transparent; }
 
   /* ── Colour palette per slot ── */
-  .s-A { background: rgba(79,142,247,0.18); color: #93c5fd; border: 1px solid rgba(79,142,247,0.35); }
-  .s-B { background: rgba(167,139,250,0.18); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.35); }
-  .s-C { background: rgba(34,211,238,0.15); color: #67e8f9; border: 1px solid rgba(34,211,238,0.3); }
-  .s-D { background: rgba(52,211,153,0.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.3); }
-  .s-E { background: rgba(251,191,36,0.15); color: #fde68a; border: 1px solid rgba(251,191,36,0.3); }
-  .s-F { background: rgba(248,113,113,0.16); color: #fca5a5; border: 1px solid rgba(248,113,113,0.3); }
-  .s-P { background: rgba(244,114,182,0.16); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.3); }
-  .s-Q { background: rgba(163,230,53,0.15); color: #bef264; border: 1px solid rgba(163,230,53,0.3); }
+  .s-A { background: linear-gradient(145deg, rgba(79,142,247,0.22), rgba(79,142,247,0.08)); color: #93c5fd; border: 1px solid rgba(79,142,247,0.4); }
+  .s-B { background: linear-gradient(145deg, rgba(167,139,250,0.22), rgba(167,139,250,0.08)); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.4); }
+  .s-C { background: linear-gradient(145deg, rgba(34,211,238,0.18), rgba(34,211,238,0.06)); color: #67e8f9; border: 1px solid rgba(34,211,238,0.35); }
+  .s-D { background: linear-gradient(145deg, rgba(52,211,153,0.18), rgba(52,211,153,0.06)); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.35); }
+  .s-E { background: linear-gradient(145deg, rgba(251,191,36,0.18), rgba(251,191,36,0.06)); color: #fde68a; border: 1px solid rgba(251,191,36,0.35); }
+  .s-F { background: linear-gradient(145deg, rgba(248,113,113,0.2), rgba(248,113,113,0.07)); color: #fca5a5; border: 1px solid rgba(248,113,113,0.35); }
+  .s-P { background: linear-gradient(145deg, rgba(244,114,182,0.2), rgba(244,114,182,0.07)); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.35); }
+  .s-Q { background: linear-gradient(145deg, rgba(163,230,53,0.18), rgba(163,230,53,0.06)); color: #bef264; border: 1px solid rgba(163,230,53,0.35); }
 
   /* ── Lab section (bottom table) ── */
   .section-label {
@@ -232,13 +249,22 @@
   }
 
   .course-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
     padding: 12px 14px;
     display: flex;
     gap: 12px;
     align-items: flex-start;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    transition: transform 0.18s ease, border-color 0.18s ease;
+  }
+
+  .course-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.18);
   }
 
   .course-slot-badge {
