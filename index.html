@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NITT ICE Section A – Timetable</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg:        #0d0f14;
+    --surface:   #141720;
+    --border:    #1e2330;
+    --accent:    #4f8ef7;
+    --accent2:   #a78bfa;
+    --green:     #34d399;
+    --amber:     #fbbf24;
+    --red:       #f87171;
+    --cyan:      #22d3ee;
+    --pink:      #f472b6;
+    --text:      #e2e8f0;
+    --muted:     #64748b;
+    --card-h:    80px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 32px 20px 48px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .institute {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  h1 {
+    font-size: clamp(20px, 4vw, 30px);
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Slot legend ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .slot-dot {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .legend-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
+  /* ── Timetable wrapper ── */
+  .tt-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 780px;
+  }
+
+  thead th {
+    background: var(--surface);
+    padding: 10px 8px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--muted);
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  thead th.time-range {
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  thead th:first-child { text-align: left; padding-left: 16px; }
+
+  tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+
+  td {
+    border-right: 1px solid var(--border);
+    text-align: center;
+    vertical-align: middle;
+    height: var(--card-h);
+    padding: 4px;
+  }
+
+  td.day-label {
+    font-weight: 600;
+    font-size: 13px;
+    text-align: left;
+    padding-left: 16px;
+    min-width: 96px;
+    color: var(--text);
+    background: var(--surface);
+  }
+
+  /* ── Subject cells ── */
+  .cell {
+    border-radius: 8px;
+    height: 68px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 4px;
+    margin: 2px;
+    position: relative;
+    transition: transform 0.15s, opacity 0.15s;
+    cursor: default;
+  }
+
+  .cell:hover { transform: scale(1.04); opacity: 0.92; }
+
+  .cell-slot {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    opacity: 0.75;
+  }
+
+  .cell-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    opacity: 0.85;
+  }
+
+  .cell-name {
+    font-size: 9.5px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.25;
+  }
+
+  /* Break / empty cells */
+  td.break-cell {
+    background: transparent;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+  }
+
+  td.empty-cell { background: transparent; }
+
+  /* ── Colour palette per slot ── */
+  .s-A { background: rgba(79,142,247,0.18); color: #93c5fd; border: 1px solid rgba(79,142,247,0.35); }
+  .s-B { background: rgba(167,139,250,0.18); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.35); }
+  .s-C { background: rgba(34,211,238,0.15); color: #67e8f9; border: 1px solid rgba(34,211,238,0.3); }
+  .s-D { background: rgba(52,211,153,0.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.3); }
+  .s-E { background: rgba(251,191,36,0.15); color: #fde68a; border: 1px solid rgba(251,191,36,0.3); }
+  .s-F { background: rgba(248,113,113,0.16); color: #fca5a5; border: 1px solid rgba(248,113,113,0.3); }
+  .s-P { background: rgba(244,114,182,0.16); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.3); }
+  .s-Q { background: rgba(163,230,53,0.15); color: #bef264; border: 1px solid rgba(163,230,53,0.3); }
+
+  /* ── Lab section (bottom table) ── */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin: 28px 0 10px;
+    padding-left: 4px;
+  }
+
+  /* ── Course card strip ── */
+  .course-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .course-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .course-slot-badge {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .course-info { flex: 1; }
+  .course-info .code { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+  .course-info .name { font-size: 12px; font-weight: 600; line-height: 1.3; }
+  .course-info .faculty { font-size: 10px; color: var(--muted); margin-top: 3px; }
+  .credit-badge { font-size: 9px; background: rgba(255,255,255,0.06); border-radius: 4px; padding: 2px 5px; color: var(--muted); margin-top: 4px; display: inline-block; }
+
+  footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="institute">National Institute of Technology · Tiruchirappalli</div>
+  <h1>ICE · <span>Section A</span> Timetable</h1>
+  <div class="subtitle">B.Tech · Semester III · Flexible Curriculum</div>
+</header>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><div class="slot-dot s-A" style="background:#4f8ef7;"></div><span class="legend-code">A</span> Electronic Circuits</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#a78bfa;border-radius:3px;"></div><span class="legend-code">B</span> Prob. & Distribution Theory</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#22d3ee;border-radius:3px;"></div><span class="legend-code">C</span> Sensors & Transducers</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#34d399;border-radius:3px;"></div><span class="legend-code">D</span> Signals & Systems</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#fbbf24;border-radius:3px;"></div><span class="legend-code">E</span> Thermodynamics & FM</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#f87171;border-radius:3px;"></div><span class="legend-code">F</span> Digital Electronics</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#f472b6;border-radius:3px;"></div><span class="legend-code">P</span> Electric Circuits Lab</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#a3e635;border-radius:3px;"></div><span class="legend-code">Q</span> Electronic Circuits Lab</div>
+</div>
+
+<!-- Theory timetable -->
+<p class="section-label">▸ Theory Slots</p>
+<div class="tt-wrapper">
+<table>
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th class="time-range">08:30<br>09:20</th>
+      <th class="time-range">09:20<br>10:10</th>
+      <th style="background:#0d0f14;color:#2a3040;border-right:1px solid #1e2330;">INTERVAL</th>
+      <th class="time-range">10:30<br>11:20</th>
+      <th class="time-range">11:20<br>12:10</th>
+      <th style="background:#0d0f14;color:#2a3040;border-right:1px solid #1e2330;">LUNCH</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Monday: A B | C D -->
+    <tr>
+      <td class="day-label">Monday</td>
+      <td><div class="cell s-A"><span class="cell-slot">SLOT A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic<br>Circuits</span></div></td>
+      <td><div class="cell s-B"><span class="cell-slot">SLOT B</span><span class="cell-code">MAIR34</span><span class="cell-name">Probability &<br>Dist. Theory</span></div></td>
+      <td class="break-cell">INTERVAL</td>
+      <td><div class="cell s-C"><span class="cell-slot">SLOT C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors &<br>Transducers</span></div></td>
+      <td><div class="cell s-D"><span class="cell-slot">SLOT D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals &<br>Systems</span></div></td>
+      <td class="break-cell">LUNCH</td>
+    </tr>
+    <!-- Tuesday: B F | D A -->
+    <tr>
+      <td class="day-label">Tuesday</td>
+      <td><div class="cell s-B"><span class="cell-slot">SLOT B</span><span class="cell-code">MAIR34</span><span class="cell-name">Probability &<br>Dist. Theory</span></div></td>
+      <td><div class="cell s-F"><span class="cell-slot">SLOT F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital<br>Electronics</span></div></td>
+      <td class="break-cell">INTERVAL</td>
+      <td><div class="cell s-D"><span class="cell-slot">SLOT D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals &<br>Systems</span></div></td>
+      <td><div class="cell s-A"><span class="cell-slot">SLOT A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic<br>Circuits</span></div></td>
+      <td class="break-cell">LUNCH</td>
+    </tr>
+    <!-- Wednesday: C A | E B -->
+    <tr>
+      <td class="day-label">Wednesday</td>
+      <td><div class="cell s-C"><span class="cell-slot">SLOT C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors &<br>Transducers</span></div></td>
+      <td><div class="cell s-A"><span class="cell-slot">SLOT A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic<br>Circuits</span></div></td>
+      <td class="break-cell">INTERVAL</td>
+      <td><div class="cell s-E"><span class="cell-slot">SLOT E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo &<br>Fluid Mech</span></div></td>
+      <td><div class="cell s-B"><span class="cell-slot">SLOT B</span><span class="cell-code">MAIR34</span><span class="cell-name">Probability &<br>Dist. Theory</span></div></td>
+      <td class="break-cell">LUNCH</td>
+    </tr>
+    <!-- Thursday: A E | F D -->
+    <tr>
+      <td class="day-label">Thursday</td>
+      <td><div class="cell s-A"><span class="cell-slot">SLOT A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic<br>Circuits</span></div></td>
+      <td><div class="cell s-E"><span class="cell-slot">SLOT E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo &<br>Fluid Mech</span></div></td>
+      <td class="break-cell">INTERVAL</td>
+      <td><div class="cell s-F"><span class="cell-slot">SLOT F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital<br>Electronics</span></div></td>
+      <td><div class="cell s-D"><span class="cell-slot">SLOT D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals &<br>Systems</span></div></td>
+      <td class="break-cell">LUNCH</td>
+    </tr>
+    <!-- Friday: E C | B F -->
+    <tr>
+      <td class="day-label">Friday</td>
+      <td><div class="cell s-E"><span class="cell-slot">SLOT E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo &<br>Fluid Mech</span></div></td>
+      <td><div class="cell s-C"><span class="cell-slot">SLOT C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors &<br>Transducers</span></div></td>
+      <td class="break-cell">INTERVAL</td>
+      <td><div class="cell s-B"><span class="cell-slot">SLOT B</span><span class="cell-code">MAIR34</span><span class="cell-name">Probability &<br>Dist. Theory</span></div></td>
+      <td><div class="cell s-F"><span class="cell-slot">SLOT F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital<br>Electronics</span></div></td>
+      <td class="break-cell">LUNCH</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- Lab timetable -->
+<p class="section-label">▸ Lab Slots (02:20 – 04:50)</p>
+<div class="tt-wrapper">
+<table>
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th class="time-range">02:20<br>03:10</th>
+      <th class="time-range">03:10<br>04:00</th>
+      <th class="time-range">04:00<br>04:50</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="day-label">Monday</td>
+      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
+    </tr>
+    <tr>
+      <td class="day-label">Tuesday</td>
+      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
+    </tr>
+    <tr>
+      <td class="day-label">Wednesday</td>
+      <td colspan="3" style="color:var(--muted);font-size:11px;font-family:'JetBrains Mono',monospace;">X – Elective / Free</td>
+    </tr>
+    <tr>
+      <td class="day-label">Thursday</td>
+      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
+    </tr>
+    <tr>
+      <td class="day-label">Friday</td>
+      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- Course reference strip -->
+<p class="section-label">▸ Course Reference</p>
+<div class="course-strip">
+  <div class="course-card">
+    <div class="course-slot-badge s-A" style="background:rgba(79,142,247,0.22);color:#93c5fd;">A</div>
+    <div class="course-info">
+      <div class="code">ICPC12</div>
+      <div class="name">Electronic Circuits</div>
+      <div class="faculty">Dr. Shiraz Sohail</div>
+      <span class="credit-badge">4 Credits</span>
+    </div>
+  </div>
+  <div class="course-card">
+    <div class="course-slot-badge s-B" style="background:rgba(167,139,250,0.22);color:#c4b5fd;">B</div>
+    <div class="course-info">
+      <div class="code">MAIR34</div>
+      <div class="name">Probability & Distribution Theory</div>
+      <div class="faculty">Maths Dept</div>
+      <span class="credit-badge">4 Credits</span>
+    </div>
+  </div>
+  <div class="course-card">
+    <div class="course-slot-badge s-C" style="background:rgba(34,211,238,0.18);color:#67e8f9;">C</div>
+    <div class="course-info">
+      <div class="code">ICPC14</div>
+      <div class="name">Sensors & Transducers</div>
+      <div class="faculty">Dr. G. Uma</div>
+      <span class="credit-badge">3 Credits</span>
+    </div>
+  </div>
+  <div class="course-card">
+    <div class="course-slot-badge s-D" style="background:rgba(52,211,153,0.18);color:#6ee7b7;">D</div>
+    <div class="course-info">
+      <div class="code">ICPC13</div>
+      <div class="name">Signals & Systems</div>
+      <div class="faculty">Dr A Ramakalyan</div>
+      <span class="credit-badge">4 Credits</span>
+    </div>
+  </div>
+  <div class="course-card">
+    <div class="course-slot-badge s-E" style="background:rgba(251,191,36,0.18);color:#fde68a;">E</div>
+    <div class="course-info">
+      <div class="code">ICPE64</div>
+      <div class="name">Thermodynamics & Fluid Mechanics</div>
+      <div class="faculty">Mech. Dept.</div>
+      <span class="credit-badge">3 Credits</span>
+    </div>
+  </div>
+  <div class="course-card">
+    <div class="course-slot-badge s-F" style="background:rgba(248,113,113,0.18);color:#fca5a5;">F</div>
+    <div class="course-info">
+      <div class="code">ICPC15</div>
+      <div class="name">Digital Electronics</div>
+      <div class="faculty">Dr. K. Dhanalakshmi</div>
+      <span class="credit-badge">3 Credits</span>
+    </div>
+  </div>
+  <div class="course-card">
+    <div class="course-slot-badge s-P" style="background:rgba(244,114,182,0.18);color:#f9a8d4;">P</div>
+    <div class="course-info">
+      <div class="code">ICLR11</div>
+      <div class="name">Electric Circuits Laboratory</div>
+      <div class="faculty">Dr. K. Dhanalakshmi</div>
+      <span class="credit-badge">2 Credits</span>
+    </div>
+  </div>
+  <div class="course-card">
+    <div class="course-slot-badge s-Q" style="background:rgba(163,230,53,0.18);color:#bef264;">Q</div>
+    <div class="course-info">
+      <div class="code">ICLR12</div>
+      <div class="name">Electronic Circuits Laboratory</div>
+      <div class="faculty">Dr. Shiraz Sohail</div>
+      <span class="credit-badge">2 Credits</span>
+    </div>
+  </div>
+</div>
+
+<footer>NIT Tiruchirappalli · ICE Dept · Section A · Academic Office</footer>
+
+</body>
+</html>
