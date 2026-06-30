@@ -6,11 +6,17 @@ A clean, dark glassy web view of the Section A (B.Tech, ICE) flexible curriculum
 
 ## What's inside
 
-- Full weekly theory timetable (Mon–Fri, slot-mapped to subjects)
-- Lab schedule (P / Q / X slots)
+- Full weekly timetable in **one continuous stretch per day** — morning through evening, no separate tables
+- Lab schedule (P / Q / X slots) woven into the same row
 - Color-coded subject legend
 - Course reference cards with faculty names and credits
-- Dark, glassmorphism-style UI — single self-contained `index.html`, no build step
+- **Glassmorphism UI** — frosted blur, glowing gradient borders, animated background blobs
+- **JavaScript interactivity**:
+  - Live clock in the header (updates every second)
+  - Cursor-following glass glow effect
+  - Today's day-row auto-highlights on load
+  - Shimmer sweep animation on hover for each subject card
+- Single self-contained `index.html` — no build step, no dependencies
 
 ## Course slot key
 
@@ -27,7 +33,7 @@ A clean, dark glassy web view of the Section A (B.Tech, ICE) flexible curriculum
 
 ## Tech
 
-Plain HTML/CSS, hosted free via GitHub Pages. No frameworks, no dependencies.
+Plain HTML/CSS/JavaScript, hosted free via GitHub Pages. No frameworks, no build tools, no dependencies.
 
 ## Disclaimer
 
@@ -35,4 +41,4 @@ Generated for personal/classmate convenience based on the official NIT Tiruchira
 
 ---
 
-Made for Section A, ICE Dept · NIT Tiruchirappalli# nitt-ice-timetable
+Made for Section A, ICE Dept · NIT Tiruchirappalli
