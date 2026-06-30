@@ -502,9 +502,17 @@
     }
   }
   spawnPetals();
-    const now = new Date();
-    const opts = { weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-    document.getElementById('clock-text').textContent = now.toLocaleString('en-IN', opts);
+
+  function updateClock() {
+    try {
+      const now = new Date();
+      const opts = { weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+      const el = document.getElementById('clock-text');
+      if (el) el.textContent = now.toLocaleString('en-US', opts);
+    } catch (err) {
+      const el = document.getElementById('clock-text');
+      if (el) el.textContent = new Date().toString();
+    }
   }
   updateClock();
   setInterval(updateClock, 1000);
