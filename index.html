@@ -8,39 +8,70 @@
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
   :root {
-    --bg:        #0d0f14;
-    --surface:   #141720;
-    --border:    #1e2330;
-    --accent:    #4f8ef7;
-    --accent2:   #a78bfa;
-    --green:     #34d399;
-    --amber:     #fbbf24;
-    --red:       #f87171;
-    --cyan:      #22d3ee;
-    --pink:      #f472b6;
-    --text:      #e2e8f0;
-    --muted:     #64748b;
-    --card-h:    80px;
+    --bg:        #05060a;
+    --text:      #e6eaf2;
+    --muted:     #6b7588;
+    --card-h:    74px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
 
   body {
-    background:
-      radial-gradient(circle at 15% 10%, rgba(79,142,247,0.25), transparent 40%),
-      radial-gradient(circle at 85% 0%, rgba(167,139,250,0.22), transparent 45%),
-      radial-gradient(circle at 50% 100%, rgba(34,211,238,0.15), transparent 50%),
-      linear-gradient(160deg, #05060a 0%, #0d0f14 50%, #090a10 100%);
-    background-attachment: fixed;
+    background: var(--bg);
     color: var(--text);
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
-    padding: 32px 20px 48px;
+    padding: 32px 16px 56px;
+    position: relative;
+    overflow-x: hidden;
   }
+
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    z-index: 0;
+    pointer-events: none;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .blob1 { width: 420px; height: 420px; background: #4f8ef7; top: -120px; left: -100px; animation-delay: 0s; }
+  .blob2 { width: 380px; height: 380px; background: #a78bfa; top: 30%; right: -140px; animation-delay: 3s; }
+  .blob3 { width: 360px; height: 360px; background: #22d3ee; bottom: -160px; left: 25%; animation-delay: 6s; }
+  .blob4 { width: 300px; height: 300px; background: #f472b6; bottom: 10%; right: 10%; animation-delay: 9s; }
+
+  @keyframes drift {
+    0%   { transform: translate(0,0) scale(1); }
+    50%  { transform: translate(40px,-30px) scale(1.1); }
+    100% { transform: translate(-30px,20px) scale(0.95); }
+  }
+
+  #cursor-glow {
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,142,247,0.12), transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s;
+    opacity: 0;
+  }
+
+  .content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; }
 
   header {
     text-align: center;
-    margin-bottom: 36px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   .institute {
@@ -52,272 +83,254 @@
     margin-bottom: 6px;
   }
 
-  h1 {
-    font-size: clamp(20px, 4vw, 30px);
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.5px;
+  h1 { font-size: clamp(22px, 4.5vw, 32px); font-weight: 700; letter-spacing: -0.5px; }
+
+  h1 span {
+    background: linear-gradient(120deg, #4f8ef7, #a78bfa, #22d3ee);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
-  h1 span { color: var(--accent); }
+  .subtitle { font-size: 12px; color: var(--muted); margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
 
-  .subtitle {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 6px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* ── Slot legend ── */
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
+  .live-clock {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
     gap: 8px;
-    justify-content: center;
-    margin-bottom: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 6px 14px;
+    border-radius: 20px;
   }
+
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 8px #34d399;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 30px; }
 
   .legend-item {
     display: flex;
     align-items: center;
     gap: 7px;
     background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 8px;
-    padding: 5px 10px;
-    font-size: 11px;
-  }
-
-  .slot-dot {
-    width: 10px; height: 10px;
-    border-radius: 3px;
-    flex-shrink: 0;
-  }
-
-  .legend-code {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 11px;
-  }
-
-  /* ── Timetable wrapper ── */
-  .tt-wrapper {
-    overflow-x: auto;
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(255,255,255,0.03);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
-    margin-bottom: 28px;
-  }
-
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    min-width: 780px;
-  }
-
-  thead th {
-    background: rgba(255,255,255,0.04);
-    padding: 10px 8px;
-    font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 600;
-    color: var(--muted);
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    border-right: 1px solid rgba(255,255,255,0.06);
-    white-space: nowrap;
-  }
-
-  thead th.time-range {
-    font-size: 10px;
-    line-height: 1.3;
-  }
-
-  thead th:first-child { text-align: left; padding-left: 16px; }
-
-  tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.06); }
-
-  td {
-    border-right: 1px solid rgba(255,255,255,0.05);
-    text-align: center;
-    vertical-align: middle;
-    height: var(--card-h);
-    padding: 4px;
-  }
-
-  td.day-label {
-    font-weight: 600;
-    font-size: 13px;
-    text-align: left;
-    padding-left: 16px;
-    min-width: 96px;
-    color: var(--text);
-    background: rgba(255,255,255,0.03);
-  }
-
-  /* ── Subject cells ── */
-  .cell {
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.09);
     border-radius: 10px;
-    height: 68px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    padding: 6px 4px;
-    margin: 2px;
-    position: relative;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
-    cursor: default;
+    padding: 6px 11px;
+    font-size: 11px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+    transition: transform 0.2s ease, border-color 0.2s ease;
   }
+  .legend-item:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.22); }
 
-  .cell:hover {
-    transform: scale(1.06) translateY(-2px);
-    opacity: 1;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.12) inset;
-  }
+  .slot-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .legend-code { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; }
 
-  .cell-slot {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    opacity: 0.75;
-  }
-
-  .cell-code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    font-weight: 600;
-    opacity: 0.85;
-  }
-
-  .cell-name {
-    font-size: 9.5px;
-    font-weight: 600;
-    text-align: center;
-    line-height: 1.25;
-  }
-
-  /* Break / empty cells */
-  td.break-cell {
-    background: transparent;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1px;
-    writing-mode: vertical-lr;
-    text-orientation: mixed;
-  }
-
-  td.empty-cell { background: transparent; }
-
-  /* ── Colour palette per slot ── */
-  .s-A { background: linear-gradient(145deg, rgba(79,142,247,0.22), rgba(79,142,247,0.08)); color: #93c5fd; border: 1px solid rgba(79,142,247,0.4); }
-  .s-B { background: linear-gradient(145deg, rgba(167,139,250,0.22), rgba(167,139,250,0.08)); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.4); }
-  .s-C { background: linear-gradient(145deg, rgba(34,211,238,0.18), rgba(34,211,238,0.06)); color: #67e8f9; border: 1px solid rgba(34,211,238,0.35); }
-  .s-D { background: linear-gradient(145deg, rgba(52,211,153,0.18), rgba(52,211,153,0.06)); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.35); }
-  .s-E { background: linear-gradient(145deg, rgba(251,191,36,0.18), rgba(251,191,36,0.06)); color: #fde68a; border: 1px solid rgba(251,191,36,0.35); }
-  .s-F { background: linear-gradient(145deg, rgba(248,113,113,0.2), rgba(248,113,113,0.07)); color: #fca5a5; border: 1px solid rgba(248,113,113,0.35); }
-  .s-P { background: linear-gradient(145deg, rgba(244,114,182,0.2), rgba(244,114,182,0.07)); color: #f9a8d4; border: 1px solid rgba(244,114,182,0.35); }
-  .s-Q { background: linear-gradient(145deg, rgba(163,230,53,0.18), rgba(163,230,53,0.06)); color: #bef264; border: 1px solid rgba(163,230,53,0.35); }
-
-  /* ── Lab section (bottom table) ── */
   .section-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     letter-spacing: 2px;
     color: var(--muted);
     text-transform: uppercase;
-    margin: 28px 0 10px;
-    padding-left: 4px;
+    margin: 0 0 12px 4px;
   }
 
-  /* ── Course card strip ── */
-  .course-strip {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-    margin-top: 28px;
+  .tt-wrapper {
+    overflow-x: auto;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.09);
+    background: rgba(255,255,255,0.025);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+    margin-bottom: 30px;
+    position: relative;
   }
+
+  table { border-collapse: collapse; width: 100%; min-width: 1180px; }
+
+  thead th {
+    background: rgba(255,255,255,0.035);
+    padding: 11px 6px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--muted);
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.09);
+    border-right: 1px solid rgba(255,255,255,0.05);
+    white-space: nowrap;
+  }
+  thead th.time-range { line-height: 1.3; }
+  thead th:first-child { text-align: left; padding-left: 18px; }
+  thead th.break-col { background: rgba(255,255,255,0.015); color: #3a4154; font-size: 9px; }
+
+  tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.055); }
+
+  td {
+    border-right: 1px solid rgba(255,255,255,0.04);
+    text-align: center;
+    vertical-align: middle;
+    height: var(--card-h);
+    padding: 3px;
+  }
+
+  td.day-label {
+    font-weight: 600;
+    font-size: 13px;
+    text-align: left;
+    padding-left: 18px;
+    min-width: 100px;
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+    position: sticky;
+    left: 0;
+  }
+
+  .cell {
+    border-radius: 11px;
+    height: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 5px 3px;
+    margin: 2px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+  }
+
+  .cell::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -60%;
+    width: 40%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.18), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+  }
+  .cell:hover::after { left: 130%; }
+
+  .cell:hover {
+    transform: scale(1.07) translateY(-3px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.15) inset;
+    z-index: 2;
+  }
+
+  .cell-slot { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; letter-spacing: 1px; opacity: 0.7; }
+  .cell-code { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 600; opacity: 0.8; }
+  .cell-name { font-size: 9px; font-weight: 600; text-align: center; line-height: 1.2; }
+
+  td.break-cell {
+    background: transparent;
+    color: #2e3447;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 1px;
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    width: 24px;
+  }
+
+  .s-A { background: linear-gradient(150deg, rgba(79,142,247,0.26), rgba(79,142,247,0.06)); color: #a8c8fc; border: 1px solid rgba(79,142,247,0.45); }
+  .s-B { background: linear-gradient(150deg, rgba(167,139,250,0.26), rgba(167,139,250,0.06)); color: #d2c3fc; border: 1px solid rgba(167,139,250,0.45); }
+  .s-C { background: linear-gradient(150deg, rgba(34,211,238,0.22), rgba(34,211,238,0.05)); color: #8aeefb; border: 1px solid rgba(34,211,238,0.4); }
+  .s-D { background: linear-gradient(150deg, rgba(52,211,153,0.22), rgba(52,211,153,0.05)); color: #8ff0c4; border: 1px solid rgba(52,211,153,0.4); }
+  .s-E { background: linear-gradient(150deg, rgba(251,191,36,0.22), rgba(251,191,36,0.05)); color: #fde29c; border: 1px solid rgba(251,191,36,0.4); }
+  .s-F { background: linear-gradient(150deg, rgba(248,113,113,0.24), rgba(248,113,113,0.06)); color: #fcb6b6; border: 1px solid rgba(248,113,113,0.4); }
+  .s-P { background: linear-gradient(150deg, rgba(244,114,182,0.24), rgba(244,114,182,0.06)); color: #fbb9da; border: 1px solid rgba(244,114,182,0.4); }
+  .s-Q { background: linear-gradient(150deg, rgba(163,230,53,0.22), rgba(163,230,53,0.05)); color: #cdf28a; border: 1px solid rgba(163,230,53,0.4); }
+  .s-X { background: rgba(255,255,255,0.025); color: var(--muted); border: 1px dashed rgba(255,255,255,0.12); }
+
+  .course-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin-top: 8px; }
 
   .course-card {
-    background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: rgba(255,255,255,0.035);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
     border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-    padding: 12px 14px;
+    border-radius: 13px;
+    padding: 13px 15px;
     display: flex;
     gap: 12px;
     align-items: flex-start;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-    transition: transform 0.18s ease, border-color 0.18s ease;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+    transition: transform 0.2s ease, border-color 0.2s ease;
   }
-
-  .course-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(255,255,255,0.18);
-  }
+  .course-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); }
 
   .course-slot-badge {
     width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 2px;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0; margin-top: 2px;
   }
 
   .course-info { flex: 1; }
   .course-info .code { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 2px; }
   .course-info .name { font-size: 12px; font-weight: 600; line-height: 1.3; }
   .course-info .faculty { font-size: 10px; color: var(--muted); margin-top: 3px; }
-  .credit-badge { font-size: 9px; background: rgba(255,255,255,0.06); border-radius: 4px; padding: 2px 5px; color: var(--muted); margin-top: 4px; display: inline-block; }
+  .credit-badge { font-size: 9px; background: rgba(255,255,255,0.07); border-radius: 5px; padding: 2px 6px; color: var(--muted); margin-top: 5px; display: inline-block; }
 
-  footer {
-    text-align: center;
-    margin-top: 40px;
-    font-size: 10px;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 1px;
-  }
+  footer { text-align: center; margin-top: 44px; font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
+
+  @media (max-width: 640px) { .blob { filter: blur(60px); opacity: 0.25; } }
 </style>
 </head>
 <body>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+<div class="blob blob4"></div>
+<div id="cursor-glow"></div>
+
+<div class="content">
 
 <header>
   <div class="institute">National Institute of Technology · Tiruchirappalli</div>
   <h1>ICE · <span>Section A</span> Timetable</h1>
   <div class="subtitle">B.Tech · Semester III · Flexible Curriculum</div>
+  <div class="live-clock"><span class="live-dot"></span><span id="clock-text">loading...</span></div>
 </header>
 
-<!-- Legend -->
 <div class="legend">
-  <div class="legend-item"><div class="slot-dot s-A" style="background:#4f8ef7;"></div><span class="legend-code">A</span> Electronic Circuits</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#a78bfa;border-radius:3px;"></div><span class="legend-code">B</span> Prob. & Distribution Theory</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#22d3ee;border-radius:3px;"></div><span class="legend-code">C</span> Sensors & Transducers</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#34d399;border-radius:3px;"></div><span class="legend-code">D</span> Signals & Systems</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#fbbf24;border-radius:3px;"></div><span class="legend-code">E</span> Thermodynamics & FM</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#f87171;border-radius:3px;"></div><span class="legend-code">F</span> Digital Electronics</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#f472b6;border-radius:3px;"></div><span class="legend-code">P</span> Electric Circuits Lab</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#a3e635;border-radius:3px;"></div><span class="legend-code">Q</span> Electronic Circuits Lab</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#4f8ef7;"></div><span class="legend-code">A</span> Electronic Circuits</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#a78bfa;"></div><span class="legend-code">B</span> Prob. & Distribution Theory</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#22d3ee;"></div><span class="legend-code">C</span> Sensors & Transducers</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#34d399;"></div><span class="legend-code">D</span> Signals & Systems</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#fbbf24;"></div><span class="legend-code">E</span> Thermodynamics & FM</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#f87171;"></div><span class="legend-code">F</span> Digital Electronics</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#f472b6;"></div><span class="legend-code">P</span> Electric Circuits Lab</div>
+  <div class="legend-item"><div class="slot-dot" style="background:#a3e635;"></div><span class="legend-code">Q</span> Electronic Circuits Lab</div>
 </div>
 
-<!-- Theory timetable -->
-<p class="section-label">▸ Theory Slots</p>
+<p class="section-label">▸ Full Day, One Stretch — Morning Through Evening</p>
 <div class="tt-wrapper">
 <table>
   <thead>
@@ -325,74 +338,10 @@
       <th>Day</th>
       <th class="time-range">08:30<br>09:20</th>
       <th class="time-range">09:20<br>10:10</th>
-      <th style="background:#0d0f14;color:#2a3040;border-right:1px solid #1e2330;">INTERVAL</th>
+      <th class="break-col">BRK</th>
       <th class="time-range">10:30<br>11:20</th>
       <th class="time-range">11:20<br>12:10</th>
-      <th style="background:#0d0f14;color:#2a3040;border-right:1px solid #1e2330;">LUNCH</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Monday: A B | C D -->
-    <tr>
-      <td class="day-label">Monday</td>
-      <td><div class="cell s-A"><span class="cell-slot">SLOT A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic<br>Circuits</span></div></td>
-      <td><div class="cell s-B"><span class="cell-slot">SLOT B</span><span class="cell-code">MAIR34</span><span class="cell-name">Probability &<br>Dist. Theory</span></div></td>
-      <td class="break-cell">INTERVAL</td>
-      <td><div class="cell s-C"><span class="cell-slot">SLOT C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors &<br>Transducers</span></div></td>
-      <td><div class="cell s-D"><span class="cell-slot">SLOT D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals &<br>Systems</span></div></td>
-      <td class="break-cell">LUNCH</td>
-    </tr>
-    <!-- Tuesday: B F | D A -->
-    <tr>
-      <td class="day-label">Tuesday</td>
-      <td><div class="cell s-B"><span class="cell-slot">SLOT B</span><span class="cell-code">MAIR34</span><span class="cell-name">Probability &<br>Dist. Theory</span></div></td>
-      <td><div class="cell s-F"><span class="cell-slot">SLOT F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital<br>Electronics</span></div></td>
-      <td class="break-cell">INTERVAL</td>
-      <td><div class="cell s-D"><span class="cell-slot">SLOT D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals &<br>Systems</span></div></td>
-      <td><div class="cell s-A"><span class="cell-slot">SLOT A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic<br>Circuits</span></div></td>
-      <td class="break-cell">LUNCH</td>
-    </tr>
-    <!-- Wednesday: C A | E B -->
-    <tr>
-      <td class="day-label">Wednesday</td>
-      <td><div class="cell s-C"><span class="cell-slot">SLOT C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors &<br>Transducers</span></div></td>
-      <td><div class="cell s-A"><span class="cell-slot">SLOT A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic<br>Circuits</span></div></td>
-      <td class="break-cell">INTERVAL</td>
-      <td><div class="cell s-E"><span class="cell-slot">SLOT E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo &<br>Fluid Mech</span></div></td>
-      <td><div class="cell s-B"><span class="cell-slot">SLOT B</span><span class="cell-code">MAIR34</span><span class="cell-name">Probability &<br>Dist. Theory</span></div></td>
-      <td class="break-cell">LUNCH</td>
-    </tr>
-    <!-- Thursday: A E | F D -->
-    <tr>
-      <td class="day-label">Thursday</td>
-      <td><div class="cell s-A"><span class="cell-slot">SLOT A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic<br>Circuits</span></div></td>
-      <td><div class="cell s-E"><span class="cell-slot">SLOT E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo &<br>Fluid Mech</span></div></td>
-      <td class="break-cell">INTERVAL</td>
-      <td><div class="cell s-F"><span class="cell-slot">SLOT F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital<br>Electronics</span></div></td>
-      <td><div class="cell s-D"><span class="cell-slot">SLOT D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals &<br>Systems</span></div></td>
-      <td class="break-cell">LUNCH</td>
-    </tr>
-    <!-- Friday: E C | B F -->
-    <tr>
-      <td class="day-label">Friday</td>
-      <td><div class="cell s-E"><span class="cell-slot">SLOT E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo &<br>Fluid Mech</span></div></td>
-      <td><div class="cell s-C"><span class="cell-slot">SLOT C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors &<br>Transducers</span></div></td>
-      <td class="break-cell">INTERVAL</td>
-      <td><div class="cell s-B"><span class="cell-slot">SLOT B</span><span class="cell-code">MAIR34</span><span class="cell-name">Probability &<br>Dist. Theory</span></div></td>
-      <td><div class="cell s-F"><span class="cell-slot">SLOT F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital<br>Electronics</span></div></td>
-      <td class="break-cell">LUNCH</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-<!-- Lab timetable -->
-<p class="section-label">▸ Lab Slots (02:20 – 04:50)</p>
-<div class="tt-wrapper">
-<table>
-  <thead>
-    <tr>
-      <th>Day</th>
+      <th class="break-col">LUNCH</th>
       <th class="time-range">02:20<br>03:10</th>
       <th class="time-range">03:10<br>04:00</th>
       <th class="time-range">04:00<br>04:50</th>
@@ -401,114 +350,112 @@
   <tbody>
     <tr>
       <td class="day-label">Monday</td>
-      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
+      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+      <td class="break-cell">BREAK</td>
+      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+      <td class="break-cell">LUNCH</td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
     </tr>
     <tr>
       <td class="day-label">Tuesday</td>
-      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
+      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+      <td class="break-cell">BREAK</td>
+      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+      <td class="break-cell">LUNCH</td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
     </tr>
     <tr>
       <td class="day-label">Wednesday</td>
-      <td colspan="3" style="color:var(--muted);font-size:11px;font-family:'JetBrains Mono',monospace;">X – Elective / Free</td>
+      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+      <td class="break-cell">BREAK</td>
+      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+      <td class="break-cell">LUNCH</td>
+      <td><div class="cell s-X"><span class="cell-slot">X</span><span class="cell-name">Elective / Free</span></div></td>
+      <td><div class="cell s-X"><span class="cell-slot">X</span><span class="cell-name">Elective / Free</span></div></td>
+      <td><div class="cell s-X"><span class="cell-slot">X</span><span class="cell-name">Elective / Free</span></div></td>
     </tr>
     <tr>
       <td class="day-label">Thursday</td>
-      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">SLOT P</span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
+      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+      <td class="break-cell">BREAK</td>
+      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+      <td class="break-cell">LUNCH</td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
     </tr>
     <tr>
       <td class="day-label">Friday</td>
-      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">SLOT Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
+      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+      <td class="break-cell">BREAK</td>
+      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+      <td class="break-cell">LUNCH</td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
     </tr>
   </tbody>
 </table>
 </div>
 
-<!-- Course reference strip -->
 <p class="section-label">▸ Course Reference</p>
 <div class="course-strip">
-  <div class="course-card">
-    <div class="course-slot-badge s-A" style="background:rgba(79,142,247,0.22);color:#93c5fd;">A</div>
-    <div class="course-info">
-      <div class="code">ICPC12</div>
-      <div class="name">Electronic Circuits</div>
-      <div class="faculty">Dr. Shiraz Sohail</div>
-      <span class="credit-badge">4 Credits</span>
-    </div>
-  </div>
-  <div class="course-card">
-    <div class="course-slot-badge s-B" style="background:rgba(167,139,250,0.22);color:#c4b5fd;">B</div>
-    <div class="course-info">
-      <div class="code">MAIR34</div>
-      <div class="name">Probability & Distribution Theory</div>
-      <div class="faculty">Maths Dept</div>
-      <span class="credit-badge">4 Credits</span>
-    </div>
-  </div>
-  <div class="course-card">
-    <div class="course-slot-badge s-C" style="background:rgba(34,211,238,0.18);color:#67e8f9;">C</div>
-    <div class="course-info">
-      <div class="code">ICPC14</div>
-      <div class="name">Sensors & Transducers</div>
-      <div class="faculty">Dr. G. Uma</div>
-      <span class="credit-badge">3 Credits</span>
-    </div>
-  </div>
-  <div class="course-card">
-    <div class="course-slot-badge s-D" style="background:rgba(52,211,153,0.18);color:#6ee7b7;">D</div>
-    <div class="course-info">
-      <div class="code">ICPC13</div>
-      <div class="name">Signals & Systems</div>
-      <div class="faculty">Dr A Ramakalyan</div>
-      <span class="credit-badge">4 Credits</span>
-    </div>
-  </div>
-  <div class="course-card">
-    <div class="course-slot-badge s-E" style="background:rgba(251,191,36,0.18);color:#fde68a;">E</div>
-    <div class="course-info">
-      <div class="code">ICPE64</div>
-      <div class="name">Thermodynamics & Fluid Mechanics</div>
-      <div class="faculty">Mech. Dept.</div>
-      <span class="credit-badge">3 Credits</span>
-    </div>
-  </div>
-  <div class="course-card">
-    <div class="course-slot-badge s-F" style="background:rgba(248,113,113,0.18);color:#fca5a5;">F</div>
-    <div class="course-info">
-      <div class="code">ICPC15</div>
-      <div class="name">Digital Electronics</div>
-      <div class="faculty">Dr. K. Dhanalakshmi</div>
-      <span class="credit-badge">3 Credits</span>
-    </div>
-  </div>
-  <div class="course-card">
-    <div class="course-slot-badge s-P" style="background:rgba(244,114,182,0.18);color:#f9a8d4;">P</div>
-    <div class="course-info">
-      <div class="code">ICLR11</div>
-      <div class="name">Electric Circuits Laboratory</div>
-      <div class="faculty">Dr. K. Dhanalakshmi</div>
-      <span class="credit-badge">2 Credits</span>
-    </div>
-  </div>
-  <div class="course-card">
-    <div class="course-slot-badge s-Q" style="background:rgba(163,230,53,0.18);color:#bef264;">Q</div>
-    <div class="course-info">
-      <div class="code">ICLR12</div>
-      <div class="name">Electronic Circuits Laboratory</div>
-      <div class="faculty">Dr. Shiraz Sohail</div>
-      <span class="credit-badge">2 Credits</span>
-    </div>
-  </div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(79,142,247,0.25);color:#a8c8fc;">A</div><div class="course-info"><div class="code">ICPC12</div><div class="name">Electronic Circuits</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">4 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(167,139,250,0.25);color:#d2c3fc;">B</div><div class="course-info"><div class="code">MAIR34</div><div class="name">Probability & Distribution Theory</div><div class="faculty">Maths Dept</div><span class="credit-badge">4 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(34,211,238,0.2);color:#8aeefb;">C</div><div class="course-info"><div class="code">ICPC14</div><div class="name">Sensors & Transducers</div><div class="faculty">Dr. G. Uma</div><span class="credit-badge">3 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(52,211,153,0.2);color:#8ff0c4;">D</div><div class="course-info"><div class="code">ICPC13</div><div class="name">Signals & Systems</div><div class="faculty">Dr A Ramakalyan</div><span class="credit-badge">4 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(251,191,36,0.2);color:#fde29c;">E</div><div class="course-info"><div class="code">ICPE64</div><div class="name">Thermodynamics & Fluid Mechanics</div><div class="faculty">Mech. Dept.</div><span class="credit-badge">3 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(248,113,113,0.22);color:#fcb6b6;">F</div><div class="course-info"><div class="code">ICPC15</div><div class="name">Digital Electronics</div><div class="faculty">Dr. K. Dhanalakshmi</div><span class="credit-badge">3 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(244,114,182,0.22);color:#fbb9da;">P</div><div class="course-info"><div class="code">ICLR11</div><div class="name">Electric Circuits Laboratory</div><div class="faculty">Dr. K. Dhanalakshmi</div><span class="credit-badge">2 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(163,230,53,0.2);color:#cdf28a;">Q</div><div class="course-info"><div class="code">ICLR12</div><div class="name">Electronic Circuits Laboratory</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">2 Credits</span></div></div>
 </div>
 
 <footer>NIT Tiruchirappalli · ICE Dept · Section A · Academic Office</footer>
+
+</div>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const opts = { weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+    document.getElementById('clock-text').textContent = now.toLocaleString('en-IN', opts);
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  const glow = document.getElementById('cursor-glow');
+  document.addEventListener('mousemove', (e) => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+    glow.style.opacity = '1';
+  });
+  document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const today = days[new Date().getDay()];
+    document.querySelectorAll('td.day-label').forEach(td => {
+      if (td.textContent.trim() === today) {
+        td.style.color = '#67e8f9';
+        td.parentElement.style.background = 'rgba(34,211,238,0.04)';
+      }
+    });
+  });
+</script>
 
 </body>
 </html>
