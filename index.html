@@ -455,6 +455,24 @@
       }
     });
   });
+
+  // Disable right-click context menu
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // Disable common dev-tools / view-source shortcuts
+  document.addEventListener('keydown', (e) => {
+    const key = e.key.toLowerCase();
+    if (
+      key === 'f12' ||
+      (e.ctrlKey && key === 'u') ||                          // view source
+      (e.ctrlKey && e.shiftKey && key === 'i') ||             // inspect
+      (e.ctrlKey && e.shiftKey && key === 'j') ||             // console
+      (e.ctrlKey && e.shiftKey && key === 'c') ||             // inspect element
+      (e.metaKey && e.altKey && key === 'i')                  // mac inspect
+    ) {
+      e.preventDefault();
+    }
+  });
 </script>
 
 </body>
