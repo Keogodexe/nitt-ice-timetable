@@ -265,7 +265,7 @@
   .s-Q { background: linear-gradient(150deg, rgba(163,230,53,0.22), rgba(163,230,53,0.05)); color: #cdf28a; border: 1px solid rgba(163,230,53,0.4); }
   .s-X { background: rgba(255,255,255,0.025); color: var(--muted); border: 1px dashed rgba(255,255,255,0.12); }
 
-  .course-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin-top: 8px; }
+  .course-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-top: 8px; margin-bottom: 8px; }
 
   .course-card {
     background: rgba(255,255,255,0.035);
@@ -297,9 +297,62 @@
   .course-info .faculty { font-size: 10px; color: var(--muted); margin-top: 3px; }
   .credit-badge { font-size: 9px; background: rgba(255,255,255,0.07); border-radius: 5px; padding: 2px 6px; color: var(--muted); margin-top: 5px; display: inline-block; }
 
-  footer { text-align: center; margin-top: 44px; font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
+  footer { text-align: center; margin-top: 64px; padding: 24px 0 12px; font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
+  footer .footer-emoji { font-size: 16px; display: block; margin-bottom: 10px; animation: floaty 3s ease-in-out infinite; }
+
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
 
   @media (max-width: 640px) { .blob { filter: blur(60px); opacity: 0.25; } }
+
+  /* ── Sakura petals ── */
+  .petal {
+    position: fixed;
+    top: -20px;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.7;
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    0%   { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0.8; }
+    100% { transform: translateY(110vh) translateX(var(--drift, 60px)) rotate(360deg); opacity: 0.2; }
+  }
+
+  /* ── Glitch title reveal ── */
+  h1 { animation: titleGlitch 1.4s ease forwards; }
+
+  @keyframes titleGlitch {
+    0%   { opacity: 0; transform: translateX(-6px); text-shadow: 2px 0 #f472b6, -2px 0 #4f8ef7; }
+    15%  { opacity: 1; transform: translateX(3px); text-shadow: -2px 0 #22d3ee, 2px 0 #a78bfa; }
+    30%  { transform: translateX(-2px); text-shadow: 2px 0 #f472b6, -1px 0 #4f8ef7; }
+    45%  { transform: translateX(1px); text-shadow: none; }
+    100% { opacity: 1; transform: translateX(0); text-shadow: none; }
+  }
+
+  /* ── Energy aura ring on subject cell hover ── */
+  .cell { isolation: isolate; }
+
+  .cell::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 13px;
+    background: conic-gradient(from 0deg, transparent, currentColor, transparent 30%);
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+    animation: spin 2.2s linear infinite;
+  }
+
+  .cell:hover::before { opacity: 0.5; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .cell-emoji { font-size: 13px; line-height: 1; margin-bottom: 1px; filter: drop-shadow(0 0 4px currentColor); }
 </style>
 </head>
 <body>
@@ -314,8 +367,8 @@
 
 <header>
   <div class="institute">National Institute of Technology · Tiruchirappalli</div>
-  <h1>ICE · <span>Section A</span> Timetable</h1>
-  <div class="subtitle">B.Tech · Semester III · Flexible Curriculum</div>
+  <h1>ICE · <span>Section A</span> Timetable ✨</h1>
+  <div class="subtitle">🎓 B.Tech · Semester III · Flexible Curriculum</div>
   <div class="live-clock"><span class="live-dot"></span><span id="clock-text">loading...</span></div>
 </header>
 
@@ -350,63 +403,63 @@
   <tbody>
     <tr>
       <td class="day-label">Monday</td>
-      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
-      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji">⚡</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji">🎲</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
       <td class="break-cell">BREAK</td>
-      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
-      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji">📡</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji">📶</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
       <td class="break-cell">LUNCH</td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
     </tr>
     <tr>
       <td class="day-label">Tuesday</td>
-      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
-      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji">🎲</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji">💾</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
       <td class="break-cell">BREAK</td>
-      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
-      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji">📶</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji">⚡</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
       <td class="break-cell">LUNCH</td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
     </tr>
     <tr>
       <td class="day-label">Wednesday</td>
-      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
-      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji">📡</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji">⚡</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
       <td class="break-cell">BREAK</td>
-      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
-      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji">🔥</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji">🎲</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
       <td class="break-cell">LUNCH</td>
-      <td><div class="cell s-X"><span class="cell-slot">X</span><span class="cell-name">Elective / Free</span></div></td>
-      <td><div class="cell s-X"><span class="cell-slot">X</span><span class="cell-name">Elective / Free</span></div></td>
-      <td><div class="cell s-X"><span class="cell-slot">X</span><span class="cell-name">Elective / Free</span></div></td>
+      <td><div class="cell s-X"><span class="cell-emoji">🌙</span><span class="cell-name">Elective / Free</span></div></td>
+      <td><div class="cell s-X"><span class="cell-emoji">🌙</span><span class="cell-name">Elective / Free</span></div></td>
+      <td><div class="cell s-X"><span class="cell-emoji">🌙</span><span class="cell-name">Elective / Free</span></div></td>
     </tr>
     <tr>
       <td class="day-label">Thursday</td>
-      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
-      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji">⚡</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji">🔥</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
       <td class="break-cell">BREAK</td>
-      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
-      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji">💾</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji">📶</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
       <td class="break-cell">LUNCH</td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
     </tr>
     <tr>
       <td class="day-label">Friday</td>
-      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
-      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji">🔥</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji">📡</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
       <td class="break-cell">BREAK</td>
-      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
-      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji">🎲</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji">💾</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
       <td class="break-cell">LUNCH</td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
     </tr>
   </tbody>
 </table>
@@ -414,22 +467,41 @@
 
 <p class="section-label">▸ Course Reference</p>
 <div class="course-strip">
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(79,142,247,0.25);color:#a8c8fc;">A</div><div class="course-info"><div class="code">ICPC12</div><div class="name">Electronic Circuits</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">4 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(167,139,250,0.25);color:#d2c3fc;">B</div><div class="course-info"><div class="code">MAIR34</div><div class="name">Probability & Distribution Theory</div><div class="faculty">Maths Dept</div><span class="credit-badge">4 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(34,211,238,0.2);color:#8aeefb;">C</div><div class="course-info"><div class="code">ICPC14</div><div class="name">Sensors & Transducers</div><div class="faculty">Dr. G. Uma</div><span class="credit-badge">3 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(52,211,153,0.2);color:#8ff0c4;">D</div><div class="course-info"><div class="code">ICPC13</div><div class="name">Signals & Systems</div><div class="faculty">Dr A Ramakalyan</div><span class="credit-badge">4 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(251,191,36,0.2);color:#fde29c;">E</div><div class="course-info"><div class="code">ICPE64</div><div class="name">Thermodynamics & Fluid Mechanics</div><div class="faculty">Mech. Dept.</div><span class="credit-badge">3 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(248,113,113,0.22);color:#fcb6b6;">F</div><div class="course-info"><div class="code">ICPC15</div><div class="name">Digital Electronics</div><div class="faculty">Dr. K. Dhanalakshmi</div><span class="credit-badge">3 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(244,114,182,0.22);color:#fbb9da;">P</div><div class="course-info"><div class="code">ICLR11</div><div class="name">Electric Circuits Laboratory</div><div class="faculty">Dr. K. Dhanalakshmi</div><span class="credit-badge">2 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(163,230,53,0.2);color:#cdf28a;">Q</div><div class="course-info"><div class="code">ICLR12</div><div class="name">Electronic Circuits Laboratory</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">2 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(79,142,247,0.25);color:#a8c8fc;">A</div><div class="course-info"><div class="code">⚡ ICPC12</div><div class="name">Electronic Circuits</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">4 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(167,139,250,0.25);color:#d2c3fc;">B</div><div class="course-info"><div class="code">🎲 MAIR34</div><div class="name">Probability & Distribution Theory</div><div class="faculty">Maths Dept</div><span class="credit-badge">4 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(34,211,238,0.2);color:#8aeefb;">C</div><div class="course-info"><div class="code">📡 ICPC14</div><div class="name">Sensors & Transducers</div><div class="faculty">Dr. G. Uma</div><span class="credit-badge">3 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(52,211,153,0.2);color:#8ff0c4;">D</div><div class="course-info"><div class="code">📶 ICPC13</div><div class="name">Signals & Systems</div><div class="faculty">Dr A Ramakalyan</div><span class="credit-badge">4 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(251,191,36,0.2);color:#fde29c;">E</div><div class="course-info"><div class="code">🔥 ICPE64</div><div class="name">Thermodynamics & Fluid Mechanics</div><div class="faculty">Mech. Dept.</div><span class="credit-badge">3 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(248,113,113,0.22);color:#fcb6b6;">F</div><div class="course-info"><div class="code">💾 ICPC15</div><div class="name">Digital Electronics</div><div class="faculty">Dr. K. Dhanalakshmi</div><span class="credit-badge">3 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(244,114,182,0.22);color:#fbb9da;">P</div><div class="course-info"><div class="code">🔧 ICLR11</div><div class="name">Electric Circuits Laboratory</div><div class="faculty">Dr. K. Dhanalakshmi</div><span class="credit-badge">2 Credits</span></div></div>
+  <div class="course-card"><div class="course-slot-badge" style="background:rgba(163,230,53,0.2);color:#cdf28a;">Q</div><div class="course-info"><div class="code">🔬 ICLR12</div><div class="name">Electronic Circuits Laboratory</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">2 Credits</span></div></div>
 </div>
 
-<footer>NIT Tiruchirappalli · ICE Dept · Section A · Academic Office</footer>
+<footer>
+  <span class="footer-emoji">🌸 ⚔️ 🌸</span>
+  NIT Tiruchirappalli · ICE Dept · Section A · Academic Office
+</footer>
 
 </div>
 
 <script>
-  function updateClock() {
+  // Sakura petals drifting down, anime style
+  function spawnPetals() {
+    const petals = ['🌸','🍃','✨'];
+    const count = 18;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.textContent = petals[Math.floor(Math.random() * petals.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.fontSize = (10 + Math.random() * 14) + 'px';
+      p.style.setProperty('--drift', (Math.random() * 140 - 70) + 'px');
+      p.style.animationDuration = (8 + Math.random() * 10) + 's';
+      p.style.animationDelay = (Math.random() * 12) + 's';
+      document.body.appendChild(p);
+    }
+  }
+  spawnPetals();
     const now = new Date();
     const opts = { weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
     document.getElementById('clock-text').textContent = now.toLocaleString('en-IN', opts);
@@ -451,7 +523,8 @@
     document.querySelectorAll('td.day-label').forEach(td => {
       if (td.textContent.trim() === today) {
         td.style.color = '#67e8f9';
-        td.parentElement.style.background = 'rgba(34,211,238,0.04)';
+        td.parentElement.style.background = 'rgba(34,211,238,0.05)';
+        td.innerHTML = '⭐ ' + td.textContent.trim();
       }
     });
   });
