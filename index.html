@@ -199,12 +199,6 @@ cursor: default;
 isolation: isolate;
 }
 
-.cell:hover {
-transform: scale(1.07) translateY(-3px);
-box-shadow: 0 10px 28px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.15) inset;
-z-index: 2;
-}
-
 /* ── Ripple Animation ── */
 .cell .ripple {
 position: absolute;
@@ -262,7 +256,6 @@ align-items: flex-start;
 box-shadow: 0 6px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
 transition: transform 0.2s ease, border-color 0.2s ease;
 }
-.course-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); }
 .course-slot-badge {
 width: 32px; height: 32px;
 border-radius: 9px;
@@ -409,6 +402,41 @@ filter: drop-shadow(0 0 4px currentColor);
 .rgb-link.gh .link-icon { color: #8aeefb; }
 .rgb-link .link-text .handle { display: block; font-size: 12px; }
 .rgb-link .link-text .label { display: block; font-size: 8px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 1px; }
+
+/* ── Hardware Acceleration & Mobile Optimization ── */
+.blob, .petal, .cell {
+    will-change: transform;
+    transform: translateZ(0); 
+}
+
+@media (hover: hover) {
+    .cell:hover {
+        transform: scale(1.07) translateY(-3px);
+        box-shadow: 0 10px 28px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.15) inset;
+        z-index: 2;
+    }
+    
+    .course-card:hover { 
+        transform: translateY(-3px); 
+        border-color: rgba(255,255,255,0.2); 
+    }
+}
+
+@media (max-width: 768px) {
+    .blob {
+        filter: blur(40px); 
+        opacity: 0.2;
+    }
+    
+    .tt-wrapper, .legend-item, .course-card {
+        backdrop-filter: blur(12px) saturate(120%);
+        -webkit-backdrop-filter: blur(12px) saturate(120%);
+    }
+
+    #cursor-glow {
+        display: none !important; 
+    }
+}
 </style>
 </head>
 <body>
@@ -421,7 +449,7 @@ filter: drop-shadow(0 0 4px currentColor);
 <header>
 <div class="institute">National Institute of Technology · Tiruchirappalli</div>
 <h1>ICE · <span>Section A</span> Timetable  ✨ </h1>
-<div class="subtitle"> 🎓  B.Tech · Semester III · Flexible Curriculum</div>
+<div class="subtitle">  🎓  B.Tech · Semester III · Flexible Curriculum</div>
 <div class="live-clock"><span class="live-dot"></span><span id="clock-text">loading...</span></div>
 </header>
 <div class="legend">
@@ -548,7 +576,8 @@ NIT Tiruchirappalli · ICE Dept · Section A
 // Sakura petals drifting down, anime style
 function spawnPetals() {
 const petals = [' 🌸 ',' 🍃 ',' ✨ '];
-const count = 18;
+// Modified logic for mobile devices
+const count = window.innerWidth < 768 ? 6 : 18; 
 for (let i = 0; i < count; i++) {
 const p = document.createElement('div');
 p.className = 'petal';
