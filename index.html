@@ -353,6 +353,123 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .cell-emoji { font-size: 13px; line-height: 1; margin-bottom: 1px; filter: drop-shadow(0 0 4px currentColor); }
+
+  /* ══════════════ RGB SOCIAL LINKS ══════════════ */
+  .social-section {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .visitor-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 7px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  .visitor-badge .eye {
+    font-size: 12px;
+    animation: blink 4s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+
+  .visitor-badge #visitor-count {
+    color: #67e8f9;
+    font-weight: 700;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .rgb-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    border-radius: 14px;
+    background: #0a0c12;
+    color: #f2f4f8;
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform 0.25s ease;
+  }
+
+  .rgb-link:hover { transform: translateY(-4px) scale(1.04); }
+
+  .rgb-link::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    z-index: -2;
+    border-radius: 16px;
+    background: conic-gradient(
+      from var(--angle, 0deg),
+      #ff2d55, #ff9500, #ffe600, #34d399, #22d3ee, #4f8ef7, #a78bfa, #f472b6, #ff2d55
+    );
+    animation: rotateRGB 3.5s linear infinite;
+    filter: blur(6px) saturate(160%);
+    opacity: 0.9;
+  }
+
+  .rgb-link::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+    border-radius: 12px;
+    background: #0a0c12;
+  }
+
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @keyframes rotateRGB {
+    to { --angle: 360deg; }
+  }
+
+  .rgb-link .link-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 4px currentColor);
+  }
+
+  .rgb-link .link-icon svg { width: 100%; height: 100%; display: block; }
+
+  .rgb-link.ig .link-icon { color: #f472b6; }
+  .rgb-link.gh .link-icon { color: #8aeefb; }
+
+  .rgb-link .link-text .handle { display: block; font-size: 12px; }
+  .rgb-link .link-text .label { display: block; font-size: 8px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 1px; }
 </style>
 </head>
 <body>
@@ -477,6 +594,20 @@
   <div class="course-card"><div class="course-slot-badge" style="background:rgba(163,230,53,0.2);color:#cdf28a;">Q</div><div class="course-info"><div class="code">🔬 ICLR12</div><div class="name">Electronic Circuits Laboratory</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">2 Credits</span></div></div>
 </div>
 
+<div class="social-section">
+  <div class="visitor-badge"><span class="eye">👁️</span> <span id="visitor-count">···</span> visits</div>
+  <div class="social-links">
+    <a class="rgb-link ig" href="https://www.instagram.com/8karthixd/" target="_blank" rel="noopener noreferrer">
+      <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg></span>
+      <span class="link-text"><span class="handle">@8karthixd</span><span class="label">Instagram</span></span>
+    </a>
+    <a class="rgb-link gh" href="https://github.com/Keogodexe/nitt-ice-timetable" target="_blank" rel="noopener noreferrer">
+      <span class="link-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.18c0 4.49 2.87 8.29 6.84 9.64.5.1.68-.22.68-.49 0-.24-.01-1.03-.01-1.87-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.5-1.11-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 2.5-.35c.85 0 1.7.12 2.5.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.92-2.34 4.78-4.57 5.04.36.32.68.95.68 1.92 0 1.39-.01 2.51-.01 2.85 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.18C22 6.58 17.52 2 12 2Z"/></svg></span>
+      <span class="link-text"><span class="handle">Keogodexe</span><span class="label">GitHub Repo</span></span>
+    </a>
+  </div>
+</div>
+
 <footer>
   <span class="footer-emoji">🌸 ⚔️ 🌸</span>
   NIT Tiruchirappalli · ICE Dept · Section A · Academic Office
@@ -545,15 +676,52 @@
     const key = e.key.toLowerCase();
     if (
       key === 'f12' ||
-      (e.ctrlKey && key === 'u') ||                          // view source
-      (e.ctrlKey && e.shiftKey && key === 'i') ||             // inspect
-      (e.ctrlKey && e.shiftKey && key === 'j') ||             // console
-      (e.ctrlKey && e.shiftKey && key === 'c') ||             // inspect element
-      (e.metaKey && e.altKey && key === 'i')                  // mac inspect
+      (e.ctrlKey && key === 'u') ||
+      (e.ctrlKey && e.shiftKey && key === 'i') ||
+      (e.ctrlKey && e.shiftKey && key === 'j') ||
+      (e.ctrlKey && e.shiftKey && key === 'c') ||
+      (e.metaKey && e.altKey && key === 'i')
     ) {
       e.preventDefault();
     }
   });
+
+  // ══════════════ Live visitor counter ══════════════
+  (function () {
+    const countEl = document.getElementById('visitor-count');
+    if (!countEl) return;
+
+    const NAMESPACE = 'nitt-ice-secA-timetable-keogodexe';
+    const KEY = 'page-visits';
+
+    function formatCount(n) {
+      return Number(n).toLocaleString('en-US');
+    }
+
+    function localFallback() {
+      try {
+        const n = (parseInt(localStorage.getItem('local-visit-count') || '0', 10) + 1);
+        localStorage.setItem('local-visit-count', n);
+        countEl.textContent = formatCount(n) + ' (local)';
+      } catch (e) {
+        countEl.textContent = '—';
+      }
+    }
+
+    fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('bad response');
+        return res.json();
+      })
+      .then((data) => {
+        if (data && typeof data.value !== 'undefined') {
+          countEl.textContent = formatCount(data.value);
+        } else {
+          localFallback();
+        }
+      })
+      .catch(() => localFallback());
+  })();
 </script>
 
 </body>
