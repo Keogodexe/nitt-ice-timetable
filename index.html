@@ -5,724 +5,661 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NITT ICE Section A – Timetable</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
-  :root {
-    --bg:        #05060a;
-    --text:      #e6eaf2;
-    --muted:     #6b7588;
-    --card-h:    74px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    padding: 32px 16px 56px;
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  .blob {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.35;
-    z-index: 0;
-    pointer-events: none;
-    animation: drift 18s ease-in-out infinite alternate;
-  }
-  .blob1 { width: 420px; height: 420px; background: #4f8ef7; top: -120px; left: -100px; animation-delay: 0s; }
-  .blob2 { width: 380px; height: 380px; background: #a78bfa; top: 30%; right: -140px; animation-delay: 3s; }
-  .blob3 { width: 360px; height: 360px; background: #22d3ee; bottom: -160px; left: 25%; animation-delay: 6s; }
-  .blob4 { width: 300px; height: 300px; background: #f472b6; bottom: 10%; right: 10%; animation-delay: 9s; }
-
-  @keyframes drift {
-    0%   { transform: translate(0,0) scale(1); }
-    50%  { transform: translate(40px,-30px) scale(1.1); }
-    100% { transform: translate(-30px,20px) scale(0.95); }
-  }
-
-  #cursor-glow {
-    position: fixed;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(79,142,247,0.12), transparent 70%);
-    pointer-events: none;
-    z-index: 1;
-    transform: translate(-50%, -50%);
-    transition: opacity 0.3s;
-    opacity: 0;
-  }
-
-  .content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; }
-
-  header {
-    text-align: center;
-    margin-bottom: 32px;
-    opacity: 0;
-    animation: fadeUp 0.7s ease forwards;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .institute {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  h1 { font-size: clamp(22px, 4.5vw, 32px); font-weight: 700; letter-spacing: -0.5px; }
-
-  h1 span {
-    background: linear-gradient(120deg, #4f8ef7, #a78bfa, #22d3ee);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .subtitle { font-size: 12px; color: var(--muted); margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
-
-  .live-clock {
-    margin-top: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 6px 14px;
-    border-radius: 20px;
-  }
-
-  .live-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #34d399;
-    box-shadow: 0 0 8px #34d399;
-    animation: pulse 1.6s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-  }
-
-  .legend { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 30px; }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(16px) saturate(160%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 10px;
-    padding: 6px 11px;
-    font-size: 11px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
-    transition: transform 0.2s ease, border-color 0.2s ease;
-  }
-  .legend-item:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.22); }
-
-  .slot-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
-  .legend-code { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; }
-
-  .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin: 0 0 12px 4px;
-  }
-
-  .tt-wrapper {
-    overflow-x: auto;
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.09);
-    background: rgba(255,255,255,0.025);
-    backdrop-filter: blur(28px) saturate(160%);
-    -webkit-backdrop-filter: blur(28px) saturate(160%);
-    box-shadow: 0 12px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
-    margin-bottom: 30px;
-    position: relative;
-  }
-
-  table { border-collapse: collapse; width: 100%; min-width: 1180px; }
-
-  thead th {
-    background: rgba(255,255,255,0.035);
-    padding: 11px 6px;
-    font-size: 10px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 600;
-    color: var(--muted);
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.09);
-    border-right: 1px solid rgba(255,255,255,0.05);
-    white-space: nowrap;
-  }
-  thead th.time-range { line-height: 1.3; }
-  thead th:first-child { text-align: left; padding-left: 18px; }
-  thead th.break-col { background: rgba(255,255,255,0.015); color: #3a4154; font-size: 9px; }
-
-  tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.055); }
-
-  td {
-    border-right: 1px solid rgba(255,255,255,0.04);
-    text-align: center;
-    vertical-align: middle;
-    height: var(--card-h);
-    padding: 3px;
-  }
-
-  td.day-label {
-    font-weight: 600;
-    font-size: 13px;
-    text-align: left;
-    padding-left: 18px;
-    min-width: 100px;
-    color: var(--text);
-    background: rgba(255,255,255,0.03);
-    position: sticky;
-    left: 0;
-  }
-
-  .cell {
-    border-radius: 11px;
-    height: 64px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    padding: 5px 3px;
-    margin: 2px;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(10px) saturate(180%);
-    -webkit-backdrop-filter: blur(10px) saturate(180%);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: default;
-  }
-
-  .cell::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -60%;
-    width: 40%; height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.18), transparent);
-    transform: skewX(-20deg);
-    transition: left 0.6s ease;
-  }
-  .cell:hover::after { left: 130%; }
-
-  .cell:hover {
-    transform: scale(1.07) translateY(-3px);
-    box-shadow: 0 10px 28px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.15) inset;
-    z-index: 2;
-  }
-
-  .cell-slot { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; letter-spacing: 1px; opacity: 0.7; }
-  .cell-code { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 600; opacity: 0.8; }
-  .cell-name { font-size: 9px; font-weight: 600; text-align: center; line-height: 1.2; }
-
-  td.break-cell {
-    background: transparent;
-    color: #2e3447;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
-    letter-spacing: 1px;
-    writing-mode: vertical-lr;
-    text-orientation: mixed;
-    width: 24px;
-  }
-
-  .s-A { background: linear-gradient(150deg, rgba(79,142,247,0.26), rgba(79,142,247,0.06)); color: #a8c8fc; border: 1px solid rgba(79,142,247,0.45); }
-  .s-B { background: linear-gradient(150deg, rgba(167,139,250,0.26), rgba(167,139,250,0.06)); color: #d2c3fc; border: 1px solid rgba(167,139,250,0.45); }
-  .s-C { background: linear-gradient(150deg, rgba(34,211,238,0.22), rgba(34,211,238,0.05)); color: #8aeefb; border: 1px solid rgba(34,211,238,0.4); }
-  .s-D { background: linear-gradient(150deg, rgba(52,211,153,0.22), rgba(52,211,153,0.05)); color: #8ff0c4; border: 1px solid rgba(52,211,153,0.4); }
-  .s-E { background: linear-gradient(150deg, rgba(251,191,36,0.22), rgba(251,191,36,0.05)); color: #fde29c; border: 1px solid rgba(251,191,36,0.4); }
-  .s-F { background: linear-gradient(150deg, rgba(248,113,113,0.24), rgba(248,113,113,0.06)); color: #fcb6b6; border: 1px solid rgba(248,113,113,0.4); }
-  .s-P { background: linear-gradient(150deg, rgba(244,114,182,0.24), rgba(244,114,182,0.06)); color: #fbb9da; border: 1px solid rgba(244,114,182,0.4); }
-  .s-Q { background: linear-gradient(150deg, rgba(163,230,53,0.22), rgba(163,230,53,0.05)); color: #cdf28a; border: 1px solid rgba(163,230,53,0.4); }
-  .s-X { background: rgba(255,255,255,0.025); color: var(--muted); border: 1px dashed rgba(255,255,255,0.12); }
-
-  .course-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-top: 8px; margin-bottom: 8px; }
-
-  .course-card {
-    background: rgba(255,255,255,0.035);
-    backdrop-filter: blur(18px) saturate(160%);
-    -webkit-backdrop-filter: blur(18px) saturate(160%);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 13px;
-    padding: 13px 15px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
-    transition: transform 0.2s ease, border-color 0.2s ease;
-  }
-  .course-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); }
-
-  .course-slot-badge {
-    width: 32px; height: 32px;
-    border-radius: 9px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px; font-weight: 700;
-    flex-shrink: 0; margin-top: 2px;
-  }
-
-  .course-info { flex: 1; }
-  .course-info .code { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 2px; }
-  .course-info .name { font-size: 12px; font-weight: 600; line-height: 1.3; }
-  .course-info .faculty { font-size: 10px; color: var(--muted); margin-top: 3px; }
-  .credit-badge { font-size: 9px; background: rgba(255,255,255,0.07); border-radius: 5px; padding: 2px 6px; color: var(--muted); margin-top: 5px; display: inline-block; }
-
-  footer { text-align: center; margin-top: 64px; padding: 24px 0 12px; font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
-  footer .footer-emoji { font-size: 16px; display: block; margin-bottom: 10px; animation: floaty 3s ease-in-out infinite; }
-
-  @keyframes floaty {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
-
-  @media (max-width: 640px) { .blob { filter: blur(60px); opacity: 0.25; } }
-
-  /* ── Sakura petals ── */
-  .petal {
-    position: fixed;
-    top: -20px;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.7;
-    animation: fall linear infinite;
-  }
-
-  @keyframes fall {
-    0%   { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0.8; }
-    100% { transform: translateY(110vh) translateX(var(--drift, 60px)) rotate(360deg); opacity: 0.2; }
-  }
-
-  /* ── Glitch title reveal ── */
-  h1 { animation: titleGlitch 1.4s ease forwards; }
-
-  @keyframes titleGlitch {
-    0%   { opacity: 0; transform: translateX(-6px); text-shadow: 2px 0 #f472b6, -2px 0 #4f8ef7; }
-    15%  { opacity: 1; transform: translateX(3px); text-shadow: -2px 0 #22d3ee, 2px 0 #a78bfa; }
-    30%  { transform: translateX(-2px); text-shadow: 2px 0 #f472b6, -1px 0 #4f8ef7; }
-    45%  { transform: translateX(1px); text-shadow: none; }
-    100% { opacity: 1; transform: translateX(0); text-shadow: none; }
-  }
-
-  /* ── Energy aura ring on subject cell hover ── */
-  .cell { isolation: isolate; }
-
-  .cell::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 13px;
-    background: conic-gradient(from 0deg, transparent, currentColor, transparent 30%);
-    opacity: 0;
-    z-index: -1;
-    transition: opacity 0.3s ease;
-    animation: spin 2.2s linear infinite;
-  }
-
-  .cell:hover::before { opacity: 0.5; }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .cell-emoji { font-size: 13px; line-height: 1; margin-bottom: 1px; filter: drop-shadow(0 0 4px currentColor); }
-
-  /* ══════════════ RGB SOCIAL LINKS ══════════════ */
-  .social-section {
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
-  }
-
-  .visitor-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.09);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 7px 16px;
-    border-radius: 20px;
-    letter-spacing: 0.5px;
-  }
-
-  .visitor-badge .eye {
-    font-size: 12px;
-    animation: blink 4s ease-in-out infinite;
-  }
-
-  @keyframes blink {
-    0%, 92%, 100% { transform: scaleY(1); }
-    95% { transform: scaleY(0.1); }
-  }
-
-  .visitor-badge #visitor-count {
-    color: #67e8f9;
-    font-weight: 700;
-  }
-
-  .social-links {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .rgb-link {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 22px;
-    border-radius: 14px;
-    background: #0a0c12;
-    color: #f2f4f8;
-    text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    overflow: hidden;
-    isolation: isolate;
-    transition: transform 0.25s ease;
-  }
-
-  .rgb-link:hover { transform: translateY(-4px) scale(1.04); }
-
-  .rgb-link::before {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    z-index: -2;
-    border-radius: 16px;
-    background: conic-gradient(
-      from var(--angle, 0deg),
-      #ff2d55, #ff9500, #ffe600, #34d399, #22d3ee, #4f8ef7, #a78bfa, #f472b6, #ff2d55
-    );
-    animation: rotateRGB 3.5s linear infinite;
-    filter: blur(6px) saturate(160%);
-    opacity: 0.9;
-  }
-
-  .rgb-link::after {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    z-index: -1;
-    border-radius: 12px;
-    background: #0a0c12;
-  }
-
-  @property --angle {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-  }
-
-  @keyframes rotateRGB {
-    to { --angle: 360deg; }
-  }
-
-  .rgb-link .link-icon {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-    filter: drop-shadow(0 0 4px currentColor);
-  }
-
-  .rgb-link .link-icon svg { width: 100%; height: 100%; display: block; }
-
-  .rgb-link.ig .link-icon { color: #f472b6; }
-  .rgb-link.gh .link-icon { color: #8aeefb; }
-
-  .rgb-link .link-text .handle { display: block; font-size: 12px; }
-  .rgb-link .link-text .label { display: block; font-size: 8px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 1px; }
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+:root {
+--bg:        #05060a;
+--text:      #e6eaf2;
+--muted:     #6b7588;
+--card-h:    74px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+background: var(--bg);
+color: var(--text);
+font-family: 'Inter', sans-serif;
+min-height: 100vh;
+padding: 32px 16px 56px;
+position: relative;
+overflow-x: hidden;
+}
+.blob {
+position: fixed;
+border-radius: 50%;
+filter: blur(80px);
+opacity: 0.35;
+z-index: 0;
+pointer-events: none;
+animation: drift 18s ease-in-out infinite alternate;
+}
+.blob1 { width: 420px; height: 420px; background: #4f8ef7; top: -120px; left: -100px; animation-delay: 0s; }
+.blob2 { width: 380px; height: 380px; background: #a78bfa; top: 30%; right: -140px; animation-delay: 3s; }
+.blob3 { width: 360px; height: 360px; background: #22d3ee; bottom: -160px; left: 25%; animation-delay: 6s; }
+.blob4 { width: 300px; height: 300px; background: #f472b6; bottom: 10%; right: 10%; animation-delay: 9s; }
+@keyframes drift {
+0%   { transform: translate(0,0) scale(1); }
+50%  { transform: translate(40px,-30px) scale(1.1); }
+100% { transform: translate(-30px,20px) scale(0.95); }
+}
+#cursor-glow {
+position: fixed;
+width: 500px;
+height: 500px;
+border-radius: 50%;
+background: radial-gradient(circle, rgba(79,142,247,0.12), transparent 70%);
+pointer-events: none;
+z-index: 1;
+transform: translate(-50%, -50%);
+transition: opacity 0.3s;
+opacity: 0;
+}
+.content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; }
+header {
+text-align: center;
+margin-bottom: 32px;
+opacity: 0;
+animation: fadeUp 0.7s ease forwards;
+}
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(14px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+.institute {
+font-family: 'JetBrains Mono', monospace;
+font-size: 10px;
+letter-spacing: 3px;
+color: var(--muted);
+text-transform: uppercase;
+margin-bottom: 6px;
+}
+h1 { font-size: clamp(22px, 4.5vw, 32px); font-weight: 700; letter-spacing: -0.5px; }
+h1 span {
+background: linear-gradient(120deg, #4f8ef7, #a78bfa, #22d3ee);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+}
+.subtitle { font-size: 12px; color: var(--muted); margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
+.live-clock {
+margin-top: 14px;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+font-family: 'JetBrains Mono', monospace;
+font-size: 11px;
+color: var(--muted);
+background: rgba(255,255,255,0.04);
+border: 1px solid rgba(255,255,255,0.08);
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+padding: 6px 14px;
+border-radius: 20px;
+}
+.live-dot {
+width: 6px; height: 6px;
+border-radius: 50%;
+background: #34d399;
+box-shadow: 0 0 8px #34d399;
+animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse {
+0%, 100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.4; transform: scale(0.8); }
+}
+.legend { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 30px; }
+.legend-item {
+display: flex;
+align-items: center;
+gap: 7px;
+background: rgba(255,255,255,0.04);
+backdrop-filter: blur(16px) saturate(160%);
+-webkit-backdrop-filter: blur(16px) saturate(160%);
+border: 1px solid rgba(255,255,255,0.09);
+border-radius: 10px;
+padding: 6px 11px;
+font-size: 11px;
+box-shadow: 0 4px 14px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.legend-item:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.22); }
+.slot-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.legend-code { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; }
+.section-label {
+font-family: 'JetBrains Mono', monospace;
+font-size: 10px;
+letter-spacing: 2px;
+color: var(--muted);
+text-transform: uppercase;
+margin: 0 0 12px 4px;
+}
+.tt-wrapper {
+overflow-x: auto;
+border-radius: 18px;
+border: 1px solid rgba(255,255,255,0.09);
+background: rgba(255,255,255,0.025);
+backdrop-filter: blur(28px) saturate(160%);
+-webkit-backdrop-filter: blur(28px) saturate(160%);
+box-shadow: 0 12px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+margin-bottom: 30px;
+position: relative;
+}
+table { border-collapse: collapse; width: 100%; min-width: 1180px; }
+thead th {
+background: rgba(255,255,255,0.035);
+padding: 11px 6px;
+font-size: 10px;
+font-family: 'JetBrains Mono', monospace;
+font-weight: 600;
+color: var(--muted);
+text-align: center;
+border-bottom: 1px solid rgba(255,255,255,0.09);
+border-right: 1px solid rgba(255,255,255,0.05);
+white-space: nowrap;
+}
+thead th.time-range { line-height: 1.3; }
+thead th:first-child { text-align: left; padding-left: 18px; }
+thead th.break-col { background: rgba(255,255,255,0.015); color: #3a4154; font-size: 9px; }
+tbody tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.055); }
+td {
+border-right: 1px solid rgba(255,255,255,0.04);
+text-align: center;
+vertical-align: middle;
+height: var(--card-h);
+padding: 3px;
+}
+td.day-label {
+font-weight: 600;
+font-size: 13px;
+text-align: left;
+padding-left: 18px;
+min-width: 100px;
+color: var(--text);
+background: rgba(255,255,255,0.03);
+position: sticky;
+left: 0;
+}
+
+/* ── Modified Cell Styling for Ripple ── */
+.cell {
+border-radius: 11px;
+height: 64px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 2px;
+padding: 5px 3px;
+margin: 2px;
+position: relative;
+overflow: hidden;
+backdrop-filter: blur(10px) saturate(180%);
+-webkit-backdrop-filter: blur(10px) saturate(180%);
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+cursor: default;
+isolation: isolate;
+}
+
+.cell:hover {
+transform: scale(1.07) translateY(-3px);
+box-shadow: 0 10px 28px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.15) inset;
+z-index: 2;
+}
+
+/* ── Ripple Animation ── */
+.cell .ripple {
+position: absolute;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.25);
+transform: translate(-50%, -50%);
+pointer-events: none;
+animation: ripple-effect 0.6s linear;
+z-index: 0;
+}
+@keyframes ripple-effect {
+0% { width: 0; height: 0; opacity: 1; }
+100% { width: 300px; height: 300px; opacity: 0; }
+}
+
+/* Make sure text stays above ripple */
+.cell-slot, .cell-code, .cell-name, .cell-emoji {
+position: relative;
+z-index: 1;
+}
+
+.cell-slot { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; letter-spacing: 1px; opacity: 0.7; }
+.cell-code { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 600; opacity: 0.8; }
+.cell-name { font-size: 9px; font-weight: 600; text-align: center; line-height: 1.2; }
+td.break-cell {
+background: transparent;
+color: #2e3447;
+font-family: 'JetBrains Mono', monospace;
+font-size: 8.5px;
+letter-spacing: 1px;
+writing-mode: vertical-lr;
+text-orientation: mixed;
+width: 24px;
+}
+.s-A { background: linear-gradient(150deg, rgba(79,142,247,0.26), rgba(79,142,247,0.06)); color: #a8c8fc; border: 1px solid rgba(79,142,247,0.45); }
+.s-B { background: linear-gradient(150deg, rgba(167,139,250,0.26), rgba(167,139,250,0.06)); color: #d2c3fc; border: 1px solid rgba(167,139,250,0.45); }
+.s-C { background: linear-gradient(150deg, rgba(34,211,238,0.22), rgba(34,211,238,0.05)); color: #8aeefb; border: 1px solid rgba(34,211,238,0.4); }
+.s-D { background: linear-gradient(150deg, rgba(52,211,153,0.22), rgba(52,211,153,0.05)); color: #8ff0c4; border: 1px solid rgba(52,211,153,0.4); }
+.s-E { background: linear-gradient(150deg, rgba(251,191,36,0.22), rgba(251,191,36,0.05)); color: #fde29c; border: 1px solid rgba(251,191,36,0.4); }
+.s-F { background: linear-gradient(150deg, rgba(248,113,113,0.24), rgba(248,113,113,0.06)); color: #fcb6b6; border: 1px solid rgba(248,113,113,0.4); }
+.s-P { background: linear-gradient(150deg, rgba(244,114,182,0.24), rgba(244,114,182,0.06)); color: #fbb9da; border: 1px solid rgba(244,114,182,0.4); }
+.s-Q { background: linear-gradient(150deg, rgba(163,230,53,0.22), rgba(163,230,53,0.05)); color: #cdf28a; border: 1px solid rgba(163,230,53,0.4); }
+.s-X { background: rgba(255,255,255,0.025); color: var(--muted); border: 1px dashed rgba(255,255,255,0.12); }
+.course-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-top: 8px; margin-bottom: 8px; }
+.course-card {
+background: rgba(255,255,255,0.035);
+backdrop-filter: blur(18px) saturate(160%);
+-webkit-backdrop-filter: blur(18px) saturate(160%);
+border: 1px solid rgba(255,255,255,0.08);
+border-radius: 13px;
+padding: 13px 15px;
+display: flex;
+gap: 12px;
+align-items: flex-start;
+box-shadow: 0 6px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.course-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); }
+.course-slot-badge {
+width: 32px; height: 32px;
+border-radius: 9px;
+display: flex; align-items: center; justify-content: center;
+font-family: 'JetBrains Mono', monospace;
+font-size: 13px; font-weight: 700;
+flex-shrink: 0; margin-top: 2px;
+}
+.course-info { flex: 1; }
+.course-info .code { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+.course-info .name { font-size: 12px; font-weight: 600; line-height: 1.3; }
+.course-info .faculty { font-size: 10px; color: var(--muted); margin-top: 3px; }
+.credit-badge { font-size: 9px; background: rgba(255,255,255,0.07); border-radius: 5px; padding: 2px 6px; color: var(--muted); margin-top: 5px; display: inline-block; }
+footer { text-align: center; margin-top: 64px; padding: 24px 0 12px; font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 1px;
+}
+footer .footer-emoji { font-size: 16px; display: block; margin-bottom: 10px; animation: floaty 3s ease-in-out infinite; }
+@keyframes floaty {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-6px); }
+}
+@media (max-width: 640px) { .blob { filter: blur(60px); opacity: 0.25; } }
+/* ── Sakura petals ── */
+.petal {
+position: fixed;
+top: -20px;
+z-index: 1;
+pointer-events: none;
+opacity: 0.7;
+animation: fall linear infinite;
+}
+@keyframes fall {
+0%   { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0.8; }
+100% { transform: translateY(110vh) translateX(var(--drift, 60px)) rotate(360deg); opacity: 0.2; }
+}
+/* ── Glitch title reveal ── */
+h1 { animation: titleGlitch 1.4s ease forwards; }
+@keyframes titleGlitch {
+0%   { opacity: 0; transform: translateX(-6px); text-shadow: 2px 0 #f472b6, -2px 0 #4f8ef7; }
+15%  { opacity: 1; transform: translateX(3px); text-shadow: -2px 0 #22d3ee, 2px 0 #a78bfa; }
+30%  { transform: translateX(-2px); text-shadow: 2px 0 #f472b6, -1px 0 #4f8ef7; }
+45%  { transform: translateX(1px); text-shadow: none; }
+100% { opacity: 1; transform: translateX(0); text-shadow: none; }
+}
+
+.cell-emoji { font-size: 13px; line-height: 1; margin-bottom: 1px; filter: drop-shadow(0 0 4px currentColor); }
+/* ══════════════  RGB SOCIAL LINKS  ══════════════  */
+.social-section {
+margin-top: 40px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 18px;
+}
+.visitor-badge {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+font-family: 'JetBrains Mono', monospace;
+font-size: 11px;
+color: var(--muted);
+background: rgba(255,255,255,0.04);
+border: 1px solid rgba(255,255,255,0.09);
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+padding: 7px 16px;
+border-radius: 20px;
+letter-spacing: 0.5px;
+}
+.visitor-badge .eye {
+font-size: 12px;
+animation: blink 4s ease-in-out infinite;
+}
+@keyframes blink {
+0%, 92%, 100% { transform: scaleY(1); }
+95% { transform: scaleY(0.1); }
+}
+.visitor-badge #visitor-count {
+color: #67e8f9;
+font-weight: 700;
+}
+.social-links {
+display: flex;
+gap: 20px;
+flex-wrap: wrap;
+justify-content: center;
+}
+.rgb-link {
+position: relative;
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 12px 22px;
+border-radius: 14px;
+background: #0a0c12;
+color: #f2f4f8;
+text-decoration: none;
+font-family: 'JetBrains Mono', monospace;
+font-size: 12px;
+font-weight: 600;
+letter-spacing: 0.5px;
+overflow: hidden;
+isolation: isolate;
+transition: transform 0.25s ease;
+}
+.rgb-link:hover { transform: translateY(-4px) scale(1.04); }
+.rgb-link::before {
+content: '';
+position: absolute;
+inset: -3px;
+z-index: -2;
+border-radius: 16px;
+background: conic-gradient(
+from var(--angle, 0deg),
+#ff2d55, #ff9500, #ffe600, #34d399, #22d3ee, #4f8ef7, #a78bfa, #f472b6, #ff2d55
+);
+animation: rotateRGB 3.5s linear infinite;
+filter: blur(6px) saturate(160%);
+opacity: 0.9;
+}
+.rgb-link::after {
+content: '';
+position: absolute;
+inset: 2px;
+z-index: -1;
+border-radius: 12px;
+background: #0a0c12;
+}
+@property --angle {
+syntax: '<angle>';
+initial-value: 0deg;
+inherits: false;
+}
+@keyframes rotateRGB {
+to { --angle: 360deg; }
+}
+.rgb-link .link-icon {
+width: 18px;
+height: 18px;
+flex-shrink: 0;
+filter: drop-shadow(0 0 4px currentColor);
+}
+.rgb-link .link-icon svg { width: 100%; height: 100%; display: block; }
+.rgb-link.ig .link-icon { color: #f472b6; }
+.rgb-link.gh .link-icon { color: #8aeefb; }
+.rgb-link .link-text .handle { display: block; font-size: 12px; }
+.rgb-link .link-text .label { display: block; font-size: 8px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 1px; }
 </style>
 </head>
 <body>
-
 <div class="blob blob1"></div>
 <div class="blob blob2"></div>
 <div class="blob blob3"></div>
 <div class="blob blob4"></div>
 <div id="cursor-glow"></div>
-
 <div class="content">
-
 <header>
-  <div class="institute">National Institute of Technology · Tiruchirappalli</div>
-  <h1>ICE · <span>Section A</span> Timetable ✨</h1>
-  <div class="subtitle">🎓 B.Tech · Semester III · Flexible Curriculum</div>
-  <div class="live-clock"><span class="live-dot"></span><span id="clock-text">loading...</span></div>
+<div class="institute">National Institute of Technology · Tiruchirappalli</div>
+<h1>ICE · <span>Section A</span> Timetable  ✨ </h1>
+<div class="subtitle"> 🎓  B.Tech · Semester III · Flexible Curriculum</div>
+<div class="live-clock"><span class="live-dot"></span><span id="clock-text">loading...</span></div>
 </header>
-
 <div class="legend">
-  <div class="legend-item"><div class="slot-dot" style="background:#4f8ef7;"></div><span class="legend-code">A</span> Electronic Circuits</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#a78bfa;"></div><span class="legend-code">B</span> Prob. & Distribution Theory</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#22d3ee;"></div><span class="legend-code">C</span> Sensors & Transducers</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#34d399;"></div><span class="legend-code">D</span> Signals & Systems</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#fbbf24;"></div><span class="legend-code">E</span> Thermodynamics & FM</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#f87171;"></div><span class="legend-code">F</span> Digital Electronics</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#f472b6;"></div><span class="legend-code">P</span> Electric Circuits Lab</div>
-  <div class="legend-item"><div class="slot-dot" style="background:#a3e635;"></div><span class="legend-code">Q</span> Electronic Circuits Lab</div>
+<div class="legend-item"><div class="slot-dot" style="background:#4f8ef7;"></div><span class="legend-code">A</span> Electronic Circuits</div>
+<div class="legend-item"><div class="slot-dot" style="background:#a78bfa;"></div><span class="legend-code">B</span> Prob. & Distribution Theory</div>
+<div class="legend-item"><div class="slot-dot" style="background:#22d3ee;"></div><span class="legend-code">C</span> Sensors & Transducers</div>
+<div class="legend-item"><div class="slot-dot" style="background:#34d399;"></div><span class="legend-code">D</span> Signals & Systems</div>
+<div class="legend-item"><div class="slot-dot" style="background:#fbbf24;"></div><span class="legend-code">E</span> Thermodynamics & FM</div>
+<div class="legend-item"><div class="slot-dot" style="background:#f87171;"></div><span class="legend-code">F</span> Digital Electronics</div>
+<div class="legend-item"><div class="slot-dot" style="background:#f472b6;"></div><span class="legend-code">P</span> Electric Circuits Lab</div>
+<div class="legend-item"><div class="slot-dot" style="background:#a3e635;"></div><span class="legend-code">Q</span> Electronic Circuits Lab</div>
 </div>
-
-<p class="section-label">▸ Full Day, One Stretch — Morning Through Evening</p>
+<p class="section-label"> ▸  Full Day, One Stretch  —  Morning Through Evening</p>
 <div class="tt-wrapper">
 <table>
-  <thead>
-    <tr>
-      <th>Day</th>
-      <th class="time-range">08:30<br>09:20</th>
-      <th class="time-range">09:20<br>10:10</th>
-      <th class="break-col">BRK</th>
-      <th class="time-range">10:30<br>11:20</th>
-      <th class="time-range">11:20<br>12:10</th>
-      <th class="break-col">LUNCH</th>
-      <th class="time-range">02:20<br>03:10</th>
-      <th class="time-range">03:10<br>04:00</th>
-      <th class="time-range">04:00<br>04:50</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="day-label">Monday</td>
-      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji">⚡</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
-      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji">🎲</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
-      <td class="break-cell">BREAK</td>
-      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji">📡</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
-      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji">📶</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
-      <td class="break-cell">LUNCH</td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
-    </tr>
-    <tr>
-      <td class="day-label">Tuesday</td>
-      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji">🎲</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
-      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji">💾</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
-      <td class="break-cell">BREAK</td>
-      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji">📶</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
-      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji">⚡</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
-      <td class="break-cell">LUNCH</td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
-    </tr>
-    <tr>
-      <td class="day-label">Wednesday</td>
-      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji">📡</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
-      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji">⚡</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
-      <td class="break-cell">BREAK</td>
-      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji">🔥</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
-      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji">🎲</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
-      <td class="break-cell">LUNCH</td>
-      <td><div class="cell s-X"><span class="cell-emoji">🌙</span><span class="cell-name">Elective / Free</span></div></td>
-      <td><div class="cell s-X"><span class="cell-emoji">🌙</span><span class="cell-name">Elective / Free</span></div></td>
-      <td><div class="cell s-X"><span class="cell-emoji">🌙</span><span class="cell-name">Elective / Free</span></div></td>
-    </tr>
-    <tr>
-      <td class="day-label">Thursday</td>
-      <td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji">⚡</span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
-      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji">🔥</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
-      <td class="break-cell">BREAK</td>
-      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji">💾</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
-      <td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji">📶</span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
-      <td class="break-cell">LUNCH</td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
-      <td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji">🔧</span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
-    </tr>
-    <tr>
-      <td class="day-label">Friday</td>
-      <td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji">🔥</span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
-      <td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji">📡</span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
-      <td class="break-cell">BREAK</td>
-      <td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji">🎲</span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
-      <td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji">💾</span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
-      <td class="break-cell">LUNCH</td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
-      <td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji">🔬</span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
-    </tr>
-  </tbody>
+<thead>
+<tr>
+<th>Day</th>
+<th class="time-range">08:30<br>09:20</th>
+<th class="time-range">09:20<br>10:10</th>
+<th class="break-col">BRK</th>
+<th class="time-range">10:30<br>11:20</th>
+<th class="time-range">11:20<br>12:10</th>
+<th class="break-col">LUNCH</th>
+<th class="time-range">02:20<br>03:10</th>
+<th class="time-range">03:10<br>04:00</th>
+<th class="time-range">04:00<br>04:50</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="day-label">Monday</td>
+<td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+<td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+<td class="break-cell">BREAK</td>
+<td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji"> 📡 </span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+<td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+<td class="break-cell">LUNCH</td>
+<td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji"> 🔧 </span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+<td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji"> 🔧 </span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+<td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji"> 🔧 </span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+</tr>
+<tr>
+<td class="day-label">Tuesday</td>
+<td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+<td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji"> 💾 </span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+<td class="break-cell">BREAK</td>
+<td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+<td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+<td class="break-cell">LUNCH</td>
+<td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji"> 🔬 </span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+<td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji"> 🔬 </span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+<td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji"> 🔬 </span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+</tr>
+<tr>
+<td class="day-label">Wednesday</td>
+<td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji"> 📡 </span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+<td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+<td class="break-cell">BREAK</td>
+<td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji"> 🔥 </span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+<td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+<td class="break-cell">LUNCH</td>
+<td><div class="cell s-X"><span class="cell-emoji"> 🌙 </span><span class="cell-name">Elective / Free</span></div></td>
+<td><div class="cell s-X"><span class="cell-emoji"> 🌙 </span><span class="cell-name">Elective / Free</span></div></td>
+<td><div class="cell s-X"><span class="cell-emoji"> 🌙 </span><span class="cell-name">Elective / Free</span></div></td>
+</tr>
+<tr>
+<td class="day-label">Thursday</td>
+<td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+<td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji"> 🔥 </span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+<td class="break-cell">BREAK</td>
+<td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji"> 💾 </span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+<td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+<td class="break-cell">LUNCH</td>
+<td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji"> 🔧 </span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+<td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji"> 🔧 </span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+<td><div class="cell s-P"><span class="cell-slot">P</span><span class="cell-emoji"> 🔧 </span><span class="cell-code">ICLR11</span><span class="cell-name">Circuits Lab</span></div></td>
+</tr>
+<tr>
+<td class="day-label">Friday</td>
+<td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji"> 🔥 </span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+<td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji"> 📡 </span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+<td class="break-cell">BREAK</td>
+<td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+<td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji"> 💾 </span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+<td class="break-cell">LUNCH</td>
+<td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji"> 🔬 </span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+<td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji"> 🔬 </span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+<td><div class="cell s-Q"><span class="cell-slot">Q</span><span class="cell-emoji"> 🔬 </span><span class="cell-code">ICLR12</span><span class="cell-name">Electronics Lab</span></div></td>
+</tr>
+</tbody>
 </table>
 </div>
-
-<p class="section-label">▸ Course Reference</p>
+<p class="section-label"> ▸  Course Reference</p>
 <div class="course-strip">
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(79,142,247,0.25);color:#a8c8fc;">A</div><div class="course-info"><div class="code">⚡ ICPC12</div><div class="name">Electronic Circuits</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">4 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(167,139,250,0.25);color:#d2c3fc;">B</div><div class="course-info"><div class="code">🎲 MAIR34</div><div class="name">Probability & Distribution Theory</div><div class="faculty">Maths Dept</div><span class="credit-badge">4 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(34,211,238,0.2);color:#8aeefb;">C</div><div class="course-info"><div class="code">📡 ICPC14</div><div class="name">Sensors & Transducers</div><div class="faculty">Dr. G. Uma</div><span class="credit-badge">3 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(52,211,153,0.2);color:#8ff0c4;">D</div><div class="course-info"><div class="code">📶 ICPC13</div><div class="name">Signals & Systems</div><div class="faculty">Dr A Ramakalyan</div><span class="credit-badge">4 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(251,191,36,0.2);color:#fde29c;">E</div><div class="course-info"><div class="code">🔥 ICPE64</div><div class="name">Thermodynamics & Fluid Mechanics</div><div class="faculty">Mech. Dept.</div><span class="credit-badge">3 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(248,113,113,0.22);color:#fcb6b6;">F</div><div class="course-info"><div class="code">💾 ICPC15</div><div class="name">Digital Electronics</div><div class="faculty">Dr. K. Dhanalakshmi</div><span class="credit-badge">3 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(244,114,182,0.22);color:#fbb9da;">P</div><div class="course-info"><div class="code">🔧 ICLR11</div><div class="name">Electric Circuits Laboratory</div><div class="faculty">Dr. K. Dhanalakshmi</div><span class="credit-badge">2 Credits</span></div></div>
-  <div class="course-card"><div class="course-slot-badge" style="background:rgba(163,230,53,0.2);color:#cdf28a;">Q</div><div class="course-info"><div class="code">🔬 ICLR12</div><div class="name">Electronic Circuits Laboratory</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">2 Credits</span></div></div>
+<div class="course-card"><div class="course-slot-badge" style="background:rgba(79,142,247,0.25);color:#a8c8fc;">A</div><div class="course-info"><div class="code"> ⚡  ICPC12</div><div class="name">Electronic Circuits</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">4 Credits</span></div></div>
+<div class="course-card"><div class="course-slot-badge" style="background:rgba(167,139,250,0.25);color:#d2c3fc;">B</div><div class="course-info"><div class="code"> 🎲  MAIR34</div><div class="name">Probability & Distribution Theory</div><div class="faculty">Maths Dept</div><span class="credit-badge">4 Credits</span></div></div>
+<div class="course-card"><div class="course-slot-badge" style="background:rgba(34,211,238,0.2);color:#8aeefb;">C</div><div class="course-info"><div class="code"> 📡  ICPC14</div><div class="name">Sensors & Transducers</div><div class="faculty">Dr. G. Uma</div><span class="credit-badge">3 Credits</span></div></div>
+<div class="course-card"><div class="course-slot-badge" style="background:rgba(52,211,153,0.2);color:#8ff0c4;">D</div><div class="course-info"><div class="code"> 📶  ICPC13</div><div class="name">Signals & Systems</div><div class="faculty">Dr A Ramakalyan</div><span class="credit-badge">4 Credits</span></div></div>
+<div class="course-card"><div class="course-slot-badge" style="background:rgba(251,191,36,0.2);color:#fde29c;">E</div><div class="course-info"><div class="code"> 🔥  ICPE64</div><div class="name">Thermodynamics & Fluid Mechanics</div><div class="faculty">Mech. Dept.</div><span class="credit-badge">3 Credits</span></div></div>
+<div class="course-card"><div class="course-slot-badge" style="background:rgba(248,113,113,0.22);color:#fcb6b6;">F</div><div class="course-info"><div class="code"> 💾  ICPC15</div><div class="name">Digital Electronics</div><div class="faculty">Dr. K. Dhanalakshmi</div><span class="credit-badge">3 Credits</span></div></div>
+<div class="course-card"><div class="course-slot-badge" style="background:rgba(244,114,182,0.22);color:#fbb9da;">P</div><div class="course-info"><div class="code"> 🔧  ICLR11</div><div class="name">Electric Circuits Laboratory</div><div class="faculty">Dr. K. Dhanalakshmi</div><span class="credit-badge">2 Credits</span></div></div>
+<div class="course-card"><div class="course-slot-badge" style="background:rgba(163,230,53,0.2);color:#cdf28a;">Q</div><div class="course-info"><div class="code"> 🔬  ICLR12</div><div class="name">Electronic Circuits Laboratory</div><div class="faculty">Dr. Shiraz Sohail</div><span class="credit-badge">2 Credits</span></div></div>
 </div>
-
 <div class="social-section">
-  <div class="visitor-badge"><span class="eye">👁️</span> <span id="visitor-count">···</span> visits</div>
-  <div class="social-links">
-    <a class="rgb-link ig" href="https://www.instagram.com/8karthixd/" target="_blank" rel="noopener noreferrer">
-      <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg></span>
-      <span class="link-text"><span class="handle">@8karthixd</span><span class="label">Instagram</span></span>
-    </a>
-    <a class="rgb-link gh" href="https://github.com/Keogodexe/nitt-ice-timetable" target="_blank" rel="noopener noreferrer">
-      <span class="link-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.18c0 4.49 2.87 8.29 6.84 9.64.5.1.68-.22.68-.49 0-.24-.01-1.03-.01-1.87-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.5-1.11-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 2.5-.35c.85 0 1.7.12 2.5.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.92-2.34 4.78-4.57 5.04.36.32.68.95.68 1.92 0 1.39-.01 2.51-.01 2.85 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.18C22 6.58 17.52 2 12 2Z"/></svg></span>
-      <span class="link-text"><span class="handle">Keogodexe</span><span class="label">GitHub Repo</span></span>
-    </a>
-  </div>
+<div class="visitor-badge"><span class="eye"> 👁️ </span> <span id="visitor-count">···</span> visits</div>
+<div class="social-links">
+<a class="rgb-link ig" href="https://www.instagram.com/8karthixd/" target="_blank" rel="noopener noreferrer">
+<span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg></span>
+<span class="link-text"><span class="handle">@8karthixd</span><span class="label">Instagram</span></span>
+</a>
+<a class="rgb-link gh" href="https://github.com/Keogodexe/nitt-ice-timetable" target="_blank" rel="noopener noreferrer">
+<span class="link-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.18c0 4.49 2.87 8.29 6.84 9.64.5.1.68-.22.68-.49 0-.24-.01-1.03-.01-1.87-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.5-1.11-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 2.5-.35c.85 0 1.7.12 2.5.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.92-2.34 4.78-4.57 5.04.36.32.68.95.68 1.92 0 1.39-.01 2.51-.01 2.85 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.18C22 6.58 17.52 2 12 2Z"/></svg></span>
+<span class="link-text"><span class="handle">Keogodexe</span><span class="label">GitHub Repo</span></span>
+</a>
 </div>
-
+</div>
 <footer>
-  <span class="footer-emoji">🌸 ⚔️ 🌸</span>
-  NIT Tiruchirappalli · ICE Dept · Section A · Academic Office
+<span class="footer-emoji"> 🌸   ⚔️   🌸 </span>
+NIT Tiruchirappalli · ICE Dept · Section A · Academic Office
 </footer>
-
 </div>
-
 <script>
-  // Sakura petals drifting down, anime style
-  function spawnPetals() {
-    const petals = ['🌸','🍃','✨'];
-    const count = 18;
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement('div');
-      p.className = 'petal';
-      p.textContent = petals[Math.floor(Math.random() * petals.length)];
-      p.style.left = Math.random() * 100 + 'vw';
-      p.style.fontSize = (10 + Math.random() * 14) + 'px';
-      p.style.setProperty('--drift', (Math.random() * 140 - 70) + 'px');
-      p.style.animationDuration = (8 + Math.random() * 10) + 's';
-      p.style.animationDelay = (Math.random() * 12) + 's';
-      document.body.appendChild(p);
-    }
-  }
-  spawnPetals();
+// Sakura petals drifting down, anime style
+function spawnPetals() {
+const petals = [' 🌸 ',' 🍃 ',' ✨ '];
+const count = 18;
+for (let i = 0; i < count; i++) {
+const p = document.createElement('div');
+p.className = 'petal';
+p.textContent = petals[Math.floor(Math.random() * petals.length)];
+p.style.left = Math.random() * 100 + 'vw';
+p.style.fontSize = (10 + Math.random() * 14) + 'px';
+p.style.setProperty('--drift', (Math.random() * 140 - 70) + 'px');
+p.style.animationDuration = (8 + Math.random() * 10) + 's';
+p.style.animationDelay = (Math.random() * 12) + 's';
+document.body.appendChild(p);
+}
+}
+spawnPetals();
+function updateClock() {
+try {
+const now = new Date();
+const opts = { weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+const el = document.getElementById('clock-text');
+if (el) el.textContent = now.toLocaleString('en-US', opts);
+} catch (err) {
+const el = document.getElementById('clock-text');
+if (el) el.textContent = new Date().toString();
+}
+}
+updateClock();
+setInterval(updateClock, 1000);
+const glow = document.getElementById('cursor-glow');
+document.addEventListener('mousemove', (e) => {
+glow.style.left = e.clientX + 'px';
+glow.style.top = e.clientY + 'px';
+glow.style.opacity = '1';
+});
+document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
 
-  function updateClock() {
-    try {
-      const now = new Date();
-      const opts = { weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-      const el = document.getElementById('clock-text');
-      if (el) el.textContent = now.toLocaleString('en-US', opts);
-    } catch (err) {
-      const el = document.getElementById('clock-text');
-      if (el) el.textContent = new Date().toString();
-    }
-  }
-  updateClock();
-  setInterval(updateClock, 1000);
-
-  const glow = document.getElementById('cursor-glow');
-  document.addEventListener('mousemove', (e) => {
-    glow.style.left = e.clientX + 'px';
-    glow.style.top = e.clientY + 'px';
-    glow.style.opacity = '1';
-  });
-  document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    const today = days[new Date().getDay()];
-    document.querySelectorAll('td.day-label').forEach(td => {
-      if (td.textContent.trim() === today) {
-        td.style.color = '#67e8f9';
-        td.parentElement.style.background = 'rgba(34,211,238,0.05)';
-        td.innerHTML = '⭐ ' + td.textContent.trim();
-      }
+// ── Ripple effect JS ──
+document.querySelectorAll('.cell').forEach(cell => {
+    cell.addEventListener('mouseenter', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => ripple.remove(), 600);
     });
-  });
+});
 
-  // Disable right-click context menu
-  document.addEventListener('contextmenu', (e) => e.preventDefault());
-
-  // Disable common dev-tools / view-source shortcuts
-  document.addEventListener('keydown', (e) => {
-    const key = e.key.toLowerCase();
-    if (
-      key === 'f12' ||
-      (e.ctrlKey && key === 'u') ||
-      (e.ctrlKey && e.shiftKey && key === 'i') ||
-      (e.ctrlKey && e.shiftKey && key === 'j') ||
-      (e.ctrlKey && e.shiftKey && key === 'c') ||
-      (e.metaKey && e.altKey && key === 'i')
-    ) {
-      e.preventDefault();
-    }
-  });
-
-  // ══════════════ Live visitor counter ══════════════
-  (function () {
-    const countEl = document.getElementById('visitor-count');
-    if (!countEl) return;
-
-    const NAMESPACE = 'nitt-ice-secA-timetable-keogodexe';
-    const KEY = 'page-visits';
-
-    function formatCount(n) {
-      return Number(n).toLocaleString('en-US');
-    }
-
-    function localFallback() {
-      try {
-        const n = (parseInt(localStorage.getItem('local-visit-count') || '0', 10) + 1);
-        localStorage.setItem('local-visit-count', n);
-        countEl.textContent = formatCount(n) + ' (local)';
-      } catch (e) {
-        countEl.textContent = '—';
-      }
-    }
-
-    fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('bad response');
-        return res.json();
-      })
-      .then((data) => {
-        if (data && typeof data.value !== 'undefined') {
-          countEl.textContent = formatCount(data.value);
-        } else {
-          localFallback();
-        }
-      })
-      .catch(() => localFallback());
-  })();
+document.addEventListener('DOMContentLoaded', () => {
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const today = days[new Date().getDay()];
+document.querySelectorAll('td.day-label').forEach(td => {
+if (td.textContent.trim() === today) {
+td.style.color = '#67e8f9';
+td.parentElement.style.background = 'rgba(34,211,238,0.05)';
+td.innerHTML = ' ⭐  ' + td.textContent.trim();
+}
+});
+});
+// Disable right-click context menu
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+// Disable common dev-tools / view-source shortcuts
+document.addEventListener('keydown', (e) => {
+const key = e.key.toLowerCase();
+if (
+key === 'f12' ||
+(e.ctrlKey && key === 'u') ||
+(e.ctrlKey && e.shiftKey && key === 'i') ||
+(e.ctrlKey && e.shiftKey && key === 'j') ||
+(e.ctrlKey && e.shiftKey && key === 'c') ||
+(e.metaKey && e.altKey && key === 'i')
+) {
+e.preventDefault();
+}
+});
+//  ══════════════  Live visitor counter  ══════════════
+(function () {
+const countEl = document.getElementById('visitor-count');
+if (!countEl) return;
+const NAMESPACE = 'nitt-ice-secA-timetable-keogodexe';
+const KEY = 'page-visits';
+function formatCount(n) {
+return Number(n).toLocaleString('en-US');
+}
+function localFallback() {
+try {
+const n = (parseInt(localStorage.getItem('local-visit-count') || '0', 10) + 1);
+localStorage.setItem('local-visit-count', n);
+countEl.textContent = formatCount(n) + ' (local)';
+} catch (e) {
+countEl.textContent = '—';
+}
+}
+fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`)
+.then((res) => {
+if (!res.ok) throw new Error('bad response');
+return res.json();
+})
+.then((data) => {
+if (data && typeof data.value !== 'undefined') {
+countEl.textContent = formatCount(data.value);
+} else {
+localFallback();
+}
+})
+.catch(() => localFallback());
+})();
 </script>
-
 </body>
 </html>
