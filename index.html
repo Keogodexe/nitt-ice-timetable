@@ -10,7 +10,7 @@
 --bg:        #05060a;
 --text:      #e6eaf2;
 --muted:     #6b7588;
---card-h:    74px;
+--card-h:    105px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
@@ -181,13 +181,13 @@ left: 0;
 
 .cell {
 border-radius: 11px;
-height: 64px;
+height: 96px;
 display: flex;
 flex-direction: column;
 align-items: center;
-justify-content: center;
+justify-content: space-between;
 gap: 2px;
-padding: 5px 3px;
+padding: 6px 4px;
 margin: 2px;
 position: relative;
 overflow: hidden;
@@ -212,14 +212,94 @@ z-index: 0;
 100% { width: 300px; height: 300px; opacity: 0; }
 }
 
-.cell-slot, .cell-code, .cell-name, .cell-emoji {
+.cell-slot, .cell-code, .cell-name, .cell-emoji, .attn-panel {
 position: relative;
 z-index: 1;
 }
 
 .cell-slot { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; letter-spacing: 1px; opacity: 0.7; }
 .cell-code { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 600; opacity: 0.8; }
-.cell-name { font-size: 9px; font-weight: 600; text-align: center; line-height: 1.2; }
+.cell-name { font-size: 9px; font-weight: 600; text-align: center; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Micro Attendance UI Layout */
+.attn-panel {
+width: 100%;
+display: flex;
+align-items: center;
+justify-content: space-between;
+background: rgba(0, 0, 0, 0.25);
+padding: 3px 6px;
+border-radius: 6px;
+margin-top: 2px;
+border: 1px solid rgba(255, 255, 255, 0.05);
+pointer-events: auto;
+}
+.attn-controls {
+display: flex;
+align-items: center;
+gap: 4px;
+}
+.attn-group {
+display: flex;
+align-items: center;
+background: rgba(255, 255, 255, 0.05);
+border-radius: 4px;
+border: 1px solid rgba(255, 255, 255, 0.08);
+padding: 1px;
+}
+.attn-btn {
+background: transparent;
+border: none;
+color: inherit;
+font-family: 'JetBrains Mono', monospace;
+font-size: 11px;
+font-weight: 700;
+width: 14px;
+height: 14px;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+border-radius: 2px;
+transition: background 0.15s, color 0.15s;
+user-select: none;
+}
+.attn-btn:hover {
+background: rgba(255, 255, 255, 0.15);
+color: #fff;
+}
+.attn-btn:active {
+background: rgba(255, 255, 255, 0.3);
+}
+.attn-val {
+font-family: 'JetBrains Mono', monospace;
+font-size: 9px;
+font-weight: 600;
+min-width: 13px;
+text-align: center;
+pointer-events: none;
+}
+.attn-lbl {
+font-size: 7.5px;
+color: var(--muted);
+margin-right: 2px;
+font-family: 'JetBrains Mono', monospace;
+text-transform: uppercase;
+}
+.attn-pct {
+font-family: 'JetBrains Mono', monospace;
+font-size: 9px;
+font-weight: 700;
+min-width: 32px;
+text-align: right;
+color: #34d399;
+text-shadow: 0 0 4px rgba(52, 211, 153, 0.2);
+}
+.attn-pct.low-pct {
+color: #f87171;
+text-shadow: 0 0 4px rgba(248, 113, 113, 0.2);
+}
+
 td.break-cell {
 background: transparent;
 color: #2e3447;
@@ -451,58 +531,58 @@ filter: drop-shadow(0 0 4px currentColor);
 <tbody>
 <tr>
 <td class="day-label">Monday</td>
-<td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
-<td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji"> 💾 </span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+<td><div class="cell s-A" data-id="mon-1"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+<td><div class="cell s-F" data-id="mon-2"><span class="cell-slot">F</span><span class="cell-emoji"> 💾 </span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
 <td class="break-cell">BREAK</td>
-<td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji"> 🔥 </span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
-<td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+<td><div class="cell s-E" data-id="mon-3"><span class="cell-slot">E</span><span class="cell-emoji"> 🔥 </span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+<td><div class="cell s-D" data-id="mon-4"><span class="cell-slot">D</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
 <td class="break-cell">LUNCH</td>
-<td><div class="cell s-G"><span class="cell-slot">G</span><span class="cell-emoji"> 📚 </span><span class="cell-name">Hon./Min.</span></div></td>
-<td colspan="2"><div class="cell s-P"><span class="cell-slot">P1</span><span class="cell-emoji"> 🔧 </span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
+<td><div class="cell s-G" data-id="mon-5"><span class="cell-slot">G</span><span class="cell-emoji"> 📚 </span><span class="cell-name">Hon./Min.</span></div></td>
+<td colspan="2"><div class="cell s-P" data-id="mon-6"><span class="cell-slot">P1</span><span class="cell-emoji"> 🔧 </span><span class="cell-code">ICLR11</span><span class="cell-name">Electric Circuits Lab</span></div></td>
 </tr>
 <tr>
 <td class="day-label">Tuesday</td>
-<td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
-<td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+<td><div class="cell s-B" data-id="tue-1"><span class="cell-slot">B</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+<td><div class="cell s-A" data-id="tue-2"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
 <td class="break-cell">BREAK</td>
-<td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji"> 💾 </span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
-<td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji"> 🔥 </span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+<td><div class="cell s-F" data-id="tue-3"><span class="cell-slot">F</span><span class="cell-emoji"> 💾 </span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+<td><div class="cell s-E" data-id="tue-4"><span class="cell-slot">E</span><span class="cell-emoji"> 🔥 </span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
 <td class="break-cell">LUNCH</td>
-<td><div class="cell s-M"><span class="cell-slot">M</span><span class="cell-emoji"> 🔮 </span><span class="cell-name">Hon./Min.</span></div></td>
+<td><div class="cell s-M" data-id="tue-5"><span class="cell-slot">M</span><span class="cell-emoji"> 🔮 </span><span class="cell-name">Hon./Min.</span></div></td>
 <td colspan="2"><div class="cell s-X"><span class="cell-slot">Q1</span><span class="cell-emoji"> 🌙 </span><span class="cell-name">Lab / Free</span></div></td>
 </tr>
 <tr>
 <td class="day-label">Wednesday</td>
-<td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji"> 📡 </span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
-<td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+<td><div class="cell s-C" data-id="wed-1"><span class="cell-slot">C</span><span class="cell-emoji"> 📡 </span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+<td><div class="cell s-B" data-id="wed-2"><span class="cell-slot">B</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
 <td class="break-cell">BREAK</td>
-<td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
-<td><div class="cell s-F"><span class="cell-slot">F</span><span class="cell-emoji"> 💾 </span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
+<td><div class="cell s-A" data-id="wed-3"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+<td><div class="cell s-F" data-id="wed-4"><span class="cell-slot">F</span><span class="cell-emoji"> 💾 </span><span class="cell-code">ICPC15</span><span class="cell-name">Digital Electronics</span></div></td>
 <td class="break-cell">LUNCH</td>
-<td><div class="cell s-G"><span class="cell-slot">G</span><span class="cell-emoji"> 📚 </span><span class="cell-name">Hon./Min.</span></div></td>
-<td><div class="cell s-M"><span class="cell-slot">M</span><span class="cell-emoji"> 🔮 </span><span class="cell-name">Hon./Min.</span></div></td>
-<td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+<td><div class="cell s-G" data-id="wed-5"><span class="cell-slot">G</span><span class="cell-emoji"> 📚 </span><span class="cell-name">Hon./Min.</span></div></td>
+<td><div class="cell s-M" data-id="wed-6"><span class="cell-slot">M</span><span class="cell-emoji"> 🔮 </span><span class="cell-name">Hon./Min.</span></div></td>
+<td><div class="cell s-D" data-id="wed-7"><span class="cell-slot">D</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
 </tr>
 <tr>
 <td class="day-label">Thursday</td>
-<td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
-<td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji"> 📡 </span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+<td><div class="cell s-D" data-id="thu-1"><span class="cell-slot">D</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+<td><div class="cell s-C" data-id="thu-2"><span class="cell-slot">C</span><span class="cell-emoji"> 📡 </span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
 <td class="break-cell">BREAK</td>
-<td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
-<td><div class="cell s-A"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
+<td><div class="cell s-B" data-id="thu-3"><span class="cell-slot">B</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+<td><div class="cell s-A" data-id="thu-4"><span class="cell-slot">A</span><span class="cell-emoji"> ⚡ </span><span class="cell-code">ICPC12</span><span class="cell-name">Electronic Circuits</span></div></td>
 <td class="break-cell">LUNCH</td>
-<td><div class="cell s-M"><span class="cell-slot">M</span><span class="cell-emoji"> 🔮 </span><span class="cell-name">Hon./Min.</span></div></td>
-<td colspan="2"><div class="cell s-Q"><span class="cell-slot">P2</span><span class="cell-emoji"> 🔬 </span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
+<td><div class="cell s-M" data-id="thu-5"><span class="cell-slot">M</span><span class="cell-emoji"> 🔮 </span><span class="cell-name">Hon./Min.</span></div></td>
+<td colspan="2"><div class="cell s-Q" data-id="thu-6"><span class="cell-slot">P2</span><span class="cell-emoji"> 🔬 </span><span class="cell-code">ICLR12</span><span class="cell-name">Electronic Circuits Lab</span></div></td>
 </tr>
 <tr>
 <td class="day-label">Friday</td>
-<td><div class="cell s-E"><span class="cell-slot">E</span><span class="cell-emoji"> 🔥 </span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
-<td><div class="cell s-D"><span class="cell-slot">D</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
+<td><div class="cell s-E" data-id="fri-1"><span class="cell-slot">E</span><span class="cell-emoji"> 🔥 </span><span class="cell-code">ICPE64</span><span class="cell-name">Thermo & FM</span></div></td>
+<td><div class="cell s-D" data-id="fri-2"><span class="cell-slot">D</span><span class="cell-emoji"> 🎲 </span><span class="cell-code">MAIR34</span><span class="cell-name">Prob. & Dist.</span></div></td>
 <td class="break-cell">BREAK</td>
-<td><div class="cell s-C"><span class="cell-slot">C</span><span class="cell-emoji"> 📡 </span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
-<td><div class="cell s-B"><span class="cell-slot">B</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
+<td><div class="cell s-C" data-id="fri-3"><span class="cell-slot">C</span><span class="cell-emoji"> 📡 </span><span class="cell-code">ICPC14</span><span class="cell-name">Sensors & Transducers</span></div></td>
+<td><div class="cell s-B" data-id="fri-4"><span class="cell-slot">B</span><span class="cell-emoji"> 📶 </span><span class="cell-code">ICPC13</span><span class="cell-name">Signals & Systems</span></div></td>
 <td class="break-cell">LUNCH</td>
-<td><div class="cell s-G"><span class="cell-slot">G</span><span class="cell-emoji"> 📚 </span><span class="cell-name">Hon./Min.</span></div></td>
+<td><div class="cell s-G" data-id="fri-5"><span class="cell-slot">G</span><span class="cell-emoji"> 📚 </span><span class="cell-name">Hon./Min.</span></div></td>
 <td colspan="2"><div class="cell s-X"><span class="cell-slot">Q2</span><span class="cell-emoji"> 🌙 </span><span class="cell-name">Lab / Free</span></div></td>
 </tr>
 </tbody>
@@ -574,8 +654,137 @@ glow.style.opacity = '1';
 });
 document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
 
+// Attendance System Engine
+const AttnSystem = {
+    storageKey: 'nitt_ice_attendance_v1',
+    state: {},
+
+    init() {
+        this.loadState();
+        this.injectPanels();
+        this.hydrateUI();
+    },
+
+    loadState() {
+        try {
+            const cached = localStorage.getItem(this.storageKey);
+            this.state = cached ? JSON.parse(cached) : {};
+        } catch (e) {
+            console.error("Cache read fail:", e);
+            this.state = {};
+        }
+    },
+
+    saveState() {
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(this.state));
+        } catch (e) {
+            console.error("Cache write fail:", e);
+        }
+    },
+
+    injectPanels() {
+        document.querySelectorAll('.cell:not(.s-X)').forEach(cell => {
+            const id = cell.getAttribute('data-id');
+            if (!id) return;
+
+            const panel = document.createElement('div');
+            panel.className = 'attn-panel';
+            // Stop propagation to prevent firing unintended cell ripple triggers or scale jumps
+            panel.addEventListener('mouseenter', e => e.stopPropagation());
+            panel.addEventListener('click', e => e.stopPropagation());
+
+            panel.innerHTML = `
+                <div class="attn-controls">
+                    <div class="attn-group">
+                        <span class="attn-btn min">-</span>
+                        <span class="attn-val attended">0</span>
+                        <span class="attn-btn plus">+</span>
+                    </div>
+                    <span class="attn-lbl">/</span>
+                    <div class="attn-group">
+                        <span class="attn-btn tot-min">-</span>
+                        <span class="attn-val total">0</span>
+                        <span class="attn-btn tot-plus">+</span>
+                    </div>
+                </div>
+                <div class="attn-pct">--</div>
+            `;
+
+            // Wire up event listeners
+            panel.querySelector('.plus').addEventListener('click', () => this.update(id, 1, 1));
+            panel.querySelector('.min').addEventListener('click', () => this.update(id, -1, 0));
+            panel.querySelector('.tot-plus').addEventListener('click', () => this.update(id, 0, 1));
+            panel.querySelector('.tot-min').addEventListener('click', () => this.update(id, 0, -1));
+
+            cell.appendChild(panel);
+        });
+    },
+
+    hydrateUI() {
+        document.querySelectorAll('.cell:not(.s-X)').forEach(cell => {
+            const id = cell.getAttribute('data-id');
+            if (!id) return;
+
+            if (!this.state[id]) {
+                this.state[id] = { a: 0, t: 0 };
+            }
+
+            this.renderCell(cell, this.state[id]);
+        });
+    },
+
+    update(id, deltaA, deltaT) {
+        if (!this.state[id]) this.state[id] = { a: 0, t: 0 };
+        
+        let node = this.state[id];
+        node.a = Math.max(0, node.a + deltaA);
+        node.t = Math.max(0, node.t + deltaT);
+
+        // Logic check: Attended classes cannot physically outpace total classes
+        if (node.a > node.t) {
+            if (deltaA > 0) node.t = node.a;
+            else node.a = node.t;
+        }
+
+        this.saveState();
+        
+        const cell = document.querySelector(`.cell[data-id="${id}"]`);
+        if (cell) this.renderCell(cell, node);
+    },
+
+    renderCell(cell, data) {
+        const aVal = cell.querySelector('.attended');
+        const tVal = cell.querySelector('.total');
+        const pctVal = cell.querySelector('.attn-pct');
+
+        if (aVal) aVal.textContent = data.a;
+        if (tVal) tVal.textContent = data.t;
+        
+        if (pctVal) {
+            if (data.t === 0) {
+                pctVal.textContent = '--';
+                pctVal.classList.remove('low-pct');
+            } else {
+                const pct = Math.round((data.a / data.t) * 100);
+                pctVal.textContent = `${pct}%`;
+                
+                // Visual threshold styling matching modern safety bounds (e.g. 75% requirements)
+                if (pct < 75) {
+                    pctVal.classList.add('low-pct');
+                } else {
+                    pctVal.classList.remove('low-pct');
+                }
+            }
+        }
+    }
+};
+
 document.querySelectorAll('.cell').forEach(cell => {
     cell.addEventListener('mouseenter', function(e) {
+        // Only target base node or text content, prevent buttons from double firing ripples
+        if (e.target !== this && !e.target.classList.contains('cell-name') && !e.target.classList.contains('cell-code')) return;
+        
         const rect = this.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -592,6 +801,8 @@ document.querySelectorAll('.cell').forEach(cell => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+AttnSystem.init();
+
 const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const today = days[new Date().getDay()];
 document.querySelectorAll('td.day-label').forEach(td => {
