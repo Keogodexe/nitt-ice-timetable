@@ -1,39 +1,55 @@
-# NITT ICE — Section A Timetable
+# NITT ICE — Section A Timetable 🗃️
 
-A clean, dark glassy web view of the Section A (B.Tech, ICE) flexible curriculum timetable — built so classmates can check their schedule without squinting at a PDF.
+A high-performance, dark cyber-neon glassmorphism web viewer for the Section A (B.Tech, ICE) flexible curriculum timetable. Built so classmates can track schedules, monitor attendance, and navigate classes seamlessly without digging through cluttered PDFs.
 
-🔗 **Live site:** [keogodexe.github.io/nitt-ice-timetable](https://keogodexe.github.io/nitt-ice-timetable)
+🔗 **Live Site:** [keogodexe.github.io/nitt-ice-timetable](https://keogodexe.github.io/nitt-ice-timetable)
 
-## What's inside
+---
 
-* **Continuous UI:** Full weekly timetable in one continuous stretch per day — morning through evening, no separate tables.
-* **Integrated Labs:** Lab schedule (P / Q / X slots) woven directly into the same row.
-* **Quick Reference:** Color-coded subject legend and course reference cards with faculty names and credits.
-* **Glassmorphism Design:** Frosted blur, glowing gradient borders, animated background blobs, and floating cherry blossoms.
-* **JavaScript Interactivity:**
-    * Live clock in the header (updates every second).
-    * Live page visit counter pulling from namespace API.
-    * Today's day-row auto-highlights on load.
-    * Cursor-following glass glow effect.
-    * Cursor-entry ripple animation on hover for every subject card.
-    * Glowing RGB-cycling social links (Instagram, GitHub) at the bottom of the page.
-* **Zero Bloat:** Single self-contained `index.html` — no build step, no dependencies.
+## ⚡ What's Inside
 
-## Course Slot Key
+* **🧠 Micro-Attendance Dashboard Engine:** Every active subject cell functions as an independent, interactive tracking widget. Classmates can increment/decrement attended ($A$) and total ($T$) classes on the fly with custom logical safety checks (attended classes cannot outpace total counts).
+* **💾 LocalStorage State Persistence:** Integrated client-side hydration. Attendance counters seamlessly cache data inside the browser's `localStorage` layer, persisting counts across sessions and site refreshes.
+* **📊 Live Percentage Readout:** Dynamically calculates current attendance using:
+  $$P = \left( \frac{A}{T} \right) \times 100$$
+  Includes safe error-handling for division-by-zero states (`--`) and conditional low-attendance warnings (automatically highlighting sub-75% fields in a sharp crimson glow).
+* **↕️ Continuous UI & Optimized Layout:** Displays the full weekly schedule in a hardware-accelerated, single-stretch layout per day. Fully fluid, mobile-optimized, and isolated using CSS `will-change: transform` properties to maximize canvas rendering performance.
+* **🌸 Advanced Interactive Aesthetics:**
+    * Smooth real-time digital clock synchronized down to the second.
+    * Real-time auto-highlighting of the current day's row upon page DOM load.
+    * Cursor-following radial glass glow tracking.
+    * Isolated structural ripple animations on slot card hover that do not interfere with attendance button interactions.
+    * Custom multi-layer background shifting blobs and floating cherry blossom petal physics.
+    * Custom glowing, conic-gradient cycling RGB link matrices for social channels.
+* **📦 Zero Bloat Infrastructure:** Completely packed into a self-contained, standalone single code file. No frameworks, zero build steps, and zero production runtime dependencies.
 
-| Slot | Code | Course | Faculty |
-| :--- | :--- | :--- | :--- |
-| **A** | ICPC12 | Electronic Circuits | Dr. Shiraz Sohail |
-| **B** | MAIR34 | Probability & Distribution Theory | Maths Dept |
-| **C** | ICPC14 | Sensors & Transducers | Dr. G. Uma |
-| **D** | ICPC13 | Signals & Systems | Dr A Ramakalyan |
-| **E** | ICPE64 | Thermodynamics & Fluid Mechanics | Mech. Dept. |
-| **F** | ICPC15 | Digital Electronics | Dr. K. Dhanalakshmi |
-| **P** | ICLR11 | Electric Circuits Laboratory | Dr. K. Dhanalakshmi |
-| **Q** | ICLR12 | Electronic Circuits Laboratory | Dr. Shiraz Sohail |
+---
 
-## Tech Stack
-Plain HTML/CSS/JavaScript, hosted free via GitHub Pages. No frameworks, no build tools, no dependencies.
+## 🧬 Course Slot Key & Faculty Mapping
 
-## Security & Vulnerability Reporting
-This system is maintained for the convenience of ICE Dept · NIT Tiruchirappalli students. If you intend to poke around the source, test the live count API, or identify any vulnerabilities in the DOM/hosting implementation, do not exploit them. Please document your findings and report them directly to me.
+| Slot | Code | Course | Faculty | Credits |
+| :--- | :--- | :--- | :--- | :--- |
+| **A** | ICPC12 | Electronic Circuits | Dr. Shiraz Sohail | 4 |
+| **B** | ICPC13 | Signals and Systems | Dr. A. Ramakalyan | 4 |
+| **C** | ICPC14 | Sensors and Transducers | Dr. G. Uma | 3 |
+| **D** | MAIR34 | Probability and Distribution Theory | Dr. R. Gowthami | 4 |
+| **E** | ICPE64 | Thermodynamics & Fluid Mechanics | Dr. Hemachandran E (Mech) | 3 |
+| **F** | ICPC15 | Digital Electronics | Dr. K. Dhanalakshmi | 3 |
+| **P1** | ICLR11 | Electric Circuits Laboratory | Dr. K. Dhanalakshmi | 2 |
+| **P2** | ICLR12 | Electronic Circuits Laboratory | Dr. Shiraz Sohail | 2 |
+
+---
+
+## 🛠️ Tech Stack
+
+* **Frontend Architecture:** Vanilla HTML5, Advanced CSS3 (Modern Flexbox, CSS Grid, `@property` Houdini animations), and Modern Vanilla ECMAScript (ES6+).
+* **Storage Layer:** Browser Native Web Storage API (`localStorage`).
+* **Deployment Platform:** GitHub Pages (Static Hosting edge nodes).
+
+---
+
+## 🛡️ Security & Vulnerability Reporting
+
+This platform is strictly maintained for the functional convenience and optimization of the ICE Dept at **National Institute of Technology, Tiruchirappalli**. 
+
+If you are exploring the underlying DOM architecture, scripting mechanisms, local storage state flows, or identify edge cases in the application, please handle findings responsibly. Document any bugs, logical performance bottlenecks, or storage anomalies and submit them directly to the repository maintainer.
